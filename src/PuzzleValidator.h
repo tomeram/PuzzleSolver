@@ -6,6 +6,8 @@
 #define PUZZLESOLVER_PUZZLEVALIDATOR_H
 
 
+#include "Puzzle.h"
+
 class PuzzleValidator {
 public:
     static bool validate(Puzzle puzzle);

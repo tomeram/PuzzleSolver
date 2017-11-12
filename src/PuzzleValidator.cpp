@@ -4,4 +4,6 @@
 
 #include "PuzzleValidator.h"
 
+bool PuzzleValidator::validate(Puzzle puzzle) {
+    return false;
 }
