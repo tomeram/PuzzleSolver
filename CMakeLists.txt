@@ -3,5 +3,5 @@ project(PuzzleSolver)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES src/main.cpp src/PuzzlePiece.cpp src/PuzzlePiece.h src/InputReader.cpp src/InputReader.h)
+set(SOURCE_FILES src/main.cpp src/PuzzlePiece.cpp src/PuzzlePiece.h src/InputReader.cpp src/InputReader.h src/PuzzleValidator.cpp src/PuzzleValidator.h src/Puzzle.cpp src/Puzzle.h)
 add_executable(PuzzleSolver ${SOURCE_FILES})
