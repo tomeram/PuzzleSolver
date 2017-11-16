@@ -15,3 +15,6 @@ dependencies:
       else
         echo "Cached CMake found"
       fi
+compile:
+  override:
+    - cmake . && make all
