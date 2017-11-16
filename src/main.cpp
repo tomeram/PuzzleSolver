@@ -29,13 +29,13 @@ int main()
 
     Puzzle puzzle(pieces);
 
-    vector<int> row1;
+    vector<unsigned int> row1;
     row1.push_back(1);
     row1.push_back(2);
 
     puzzle.addRow(row1);
 
-    vector<int> row2;
+    vector<unsigned int> row2;
     row2.push_back(3);
     row2.push_back(4);
 

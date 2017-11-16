@@ -37,7 +37,7 @@ bool checkPuzzleEdges(const PuzzlePiece &piece, int row, int col, int cols, int 
     return true;
 }
 
-bool checkUsedPieces(vector<int> &usedPieces, int pieceNum)
+bool checkUsedPieces(vector<unsigned int> &usedPieces, unsigned int pieceNum)
 {
     sort(usedPieces.begin(), usedPieces.end());
 
@@ -46,7 +46,7 @@ bool checkUsedPieces(vector<int> &usedPieces, int pieceNum)
         return false;
     }
 
-    for (int i = 0; i < usedPieces.size(); i++) {
+    for (unsigned int i = 0; i < usedPieces.size(); i++) {
         if (i + 1 != usedPieces.at(i)) {
             cout << "Duplicate piece used" << endl;
             return false;
@@ -65,10 +65,10 @@ bool PuzzleValidator::validate(const Puzzle &puzzle)
     }
 
     // Check row size to make sure all rows have the same size
-    auto rowSize = static_cast<int>(sol.at(0).size());
-    vector<int> usedPieces;
+    auto rowSize = static_cast<unsigned int>(sol.at(0).size());
+    vector<unsigned int> usedPieces;
 
-    for (int i = 0; i < sol.size(); i++) {
+    for (unsigned int i = 0; i < sol.size(); i++) {
         auto &row = sol[i];
 
         // Make sure all rows have the same size
@@ -76,8 +76,8 @@ bool PuzzleValidator::validate(const Puzzle &puzzle)
             return false;
         }
 
-        for (int j = 0; j < rowSize; j++) {
-            int pieceID = row[j];
+        for (unsigned int j = 0; j < rowSize; j++) {
+            unsigned int pieceID = row[j];
 
             usedPieces.push_back(pieceID);
             auto &piece = puzzle.getPieceById(pieceID);

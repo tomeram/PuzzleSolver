@@ -16,9 +16,9 @@ public:
 
     ~Puzzle() = default;
 
-    void addRow(vector<int> &row);
+    void addRow(vector<unsigned int> &row);
 
-    const vector<vector<int>> &getSolution() const;
+    const vector<vector<unsigned int>> &getSolution() const;
 
     const PuzzlePiece &getPieceById(int id) const;
 
@@ -26,7 +26,7 @@ public:
 
 private:
     vector<PuzzlePiece> pieces;
-    vector<vector<int>> solution;
+    vector<vector<unsigned int>> solution;
 };
 
 
