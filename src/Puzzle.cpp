@@ -2,19 +2,35 @@
 // Created by Tomer Amir on 12/11/2017.
 //
 
+#include <algorithm>
 #include "Puzzle.h"
 
-Puzzle::Puzzle()
+bool compare(const PuzzlePiece &piece1, const PuzzlePiece &piece2)
 {
-    this->matrix = new vector<vector<int>>;
+    return piece1.id < piece2.id;
 }
 
-Puzzle::~Puzzle()
+Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(move(newPieces))
 {
-    delete[] this->matrix;
+    sort(pieces.begin(), pieces.end(), compare);
 }
 
-void Puzzle::addRow()
+const vector<vector<int>> &Puzzle::getSolution() const
 {
-    this->matrix;
+    const auto &res = solution;
+    return res;
+}
+
+void Puzzle::addRow(vector<int> &row)
+{
+    this->solution.push_back(move(row));
+}
+
+const PuzzlePiece &Puzzle::getPieceById(int id) const {
+    const auto &res = pieces.at(id - 1);
+    return res;
+}
+
+unsigned long Puzzle::getPieceNumber() const {
+    return pieces.size();
 }

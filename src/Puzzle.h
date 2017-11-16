@@ -6,18 +6,27 @@
 #define PUZZLESOLVER_PUZZLE_H
 
 #include <vector>
+#include "PuzzlePiece.h"
 
 using namespace std;
 
 class Puzzle {
 public:
-    Puzzle();
-    ~Puzzle();
+    explicit Puzzle(vector<PuzzlePiece> pieces);
 
-    void addRow();
+    ~Puzzle() = default;
+
+    void addRow(vector<int> &row);
+
+    const vector<vector<int>> &getSolution() const;
+
+    const PuzzlePiece &getPieceById(int id) const;
+
+    unsigned long getPieceNumber() const;
 
 private:
-    vector<vector<int>> *matrix;
+    vector<PuzzlePiece> pieces;
+    vector<vector<int>> solution;
 };
 
 
