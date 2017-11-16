@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
-project(PazzleSolver)
+project(PuzzleSolver)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp PazzlePeice.cpp PazzlePeice.h InputReader.cpp InputReader.h)
-add_executable(PazzleSolver ${SOURCE_FILES})
+set(SOURCE_FILES src/main.cpp src/PuzzlePiece.cpp src/PuzzlePiece.h src/InputReader.cpp src/InputReader.h)
+add_executable(PuzzleSolver ${SOURCE_FILES})

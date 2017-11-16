@@ -20,7 +20,7 @@ bool isPuzzle( int id , int a, int b, int c, int d){
     return true;
 }
 
-PazzlePeice* InputReader::readInput(string path) {
+PuzzlePiece* InputReader::readInput(string path) {
 
     ifstream fin(path);
     if (!fin.good()){
@@ -51,7 +51,7 @@ PazzlePeice* InputReader::readInput(string path) {
     string line;
     int id,a,b,c,d;
     int i=0,j=0;
-    PazzlePeice* pazzles[size];
+    PuzzlePiece* pazzles[size];
 
     while (getline(fin, line)) {
         istringstream buf(line);
@@ -95,7 +95,7 @@ PazzlePeice* InputReader::readInput(string path) {
                 // Puzzle ID id has wrong data: a , b, c, d
             }
             if(j<size){
-                pazzles[j] = new PazzlePeice(id,a,b,c,d);
+                pazzles[j] = new PuzzlePiece(id,a,b,c,d);
                 j++;
             } else{
                 //error more pazzele peice then reported
