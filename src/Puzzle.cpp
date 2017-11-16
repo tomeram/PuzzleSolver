@@ -15,13 +15,13 @@ Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(move(newPieces))
     sort(pieces.begin(), pieces.end(), compare);
 }
 
-const vector<vector<int>> &Puzzle::getSolution() const
+const vector<vector<unsigned int>> &Puzzle::getSolution() const
 {
     const auto &res = solution;
     return res;
 }
 
-void Puzzle::addRow(vector<int> &row)
+void Puzzle::addRow(vector<unsigned int> &row)
 {
     this->solution.push_back(move(row));
 }
