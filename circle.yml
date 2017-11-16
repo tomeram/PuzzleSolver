@@ -4,9 +4,8 @@ machine:
 
 dependencies:
   pre:
-    - sudo apt-get update; sudo apt-get install gcc-5; sudo apt-get install g++-5
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 100
-    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 100
+    - sudo apt-get update; sudo apt-get install g++-5.3.0
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5.3.0 100
 
   cache_directories:
     - ~/cmake-3.6.2-Linux-x86_64
