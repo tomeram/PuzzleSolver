@@ -14,7 +14,7 @@ using namespace std;
 
 class InputReader {
 public:
-    PuzzlePiece* readInput(string path);
+    PuzzlePiece* readInput(string pathIn , string pathOut);
 };
 
 
