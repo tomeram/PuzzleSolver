@@ -11,12 +11,10 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    InputReader reader;
     vector<PuzzlePiece> pieces;
 
     try {
-        string input = argv[1];
-        reader.readInput(input, pieces);
+        InputReader::readInput(argv[1], pieces);
     } catch (int e) {
         cout << "Error: " << e << endl;
         exit(1);
