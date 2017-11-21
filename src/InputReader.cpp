@@ -53,15 +53,7 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
     getline(fin, s_size);
     int size;
 
-    try {
-        size = stoi(s_size);
-    }
-    catch(std::invalid_argument& e){
-        // TODO: Reject
-    }
-    catch(std::out_of_range& e){
-        // TODO: Reject
-    }
+    size = stoi(s_size);
 
     string line;
     int id, a, b, c, d;
