@@ -2,9 +2,24 @@
 
 #include "PuzzlePiece.h"
 #include "PuzzleValidator.h"
+#include "InputReader.h"
 
-int main()
+int main(int argc, char** argv)
 {
+    InputReader reader;
+
+    for (int  i = 0; i < argc; i++) {
+        cout << argv[i] << endl;
+    }
+
+    try {
+        vector<PuzzlePiece> test =  reader.readInput("../test.txt");
+
+        cout << "Success" << endl;
+    } catch (int e) {
+        cout << "Error: " << e << endl;
+    }
+
 //    int i;
     vector<PuzzlePiece> pieces;
 //
