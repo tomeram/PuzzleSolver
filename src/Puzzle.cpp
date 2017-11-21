@@ -23,3 +23,7 @@ const PuzzlePiece &Puzzle::getPieceById(int id) const {
 unsigned long Puzzle::getPieceNumber() const {
     return pieces.size();
 }
+
+vector<PuzzlePiece> Puzzle::getPieces() {
+    return this->pieces;
+}

@@ -20,6 +20,8 @@ public:
 
     unsigned long getPieceNumber() const;
 
+    vector<PuzzlePiece> getPieces();
+
 private:
     vector<PuzzlePiece> pieces;
 };

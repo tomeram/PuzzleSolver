@@ -16,7 +16,11 @@ private:
     vector<vector<unsigned int>> sol;
 
 public:
-    void addRow(vector<unsigned int> &row);
+    PuzzleSolution();
+
+    void addRow();
+
+    void addElement(unsigned int id);
 
     const vector<vector<unsigned int>> &getSolution() const;
 

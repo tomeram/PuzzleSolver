@@ -3,7 +3,7 @@
 #include "PuzzlePiece.h"
 #include "PuzzleValidator.h"
 #include "InputReader.h"
-#include "PuzzleSolution.h"
+#include "PuzzleSolver.h"
 
 int main(int argc, char** argv)
 {
@@ -24,9 +24,9 @@ int main(int argc, char** argv)
 
     Puzzle puzzle(pieces);
 
-    PuzzleSolution solution;
+    PuzzleSolver solver(puzzle);
 
-    bool t = PuzzleValidator::validate(puzzle, solution);
+    bool t = solver.solve();
 
     cout << "The result is ";
 

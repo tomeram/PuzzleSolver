@@ -4,9 +4,14 @@
 
 #include "PuzzleSolution.h"
 
-void PuzzleSolution::addRow(vector<unsigned int> &row)
+void PuzzleSolution::addRow()
 {
-    this->sol.push_back(row);
+    this->sol.emplace_back();
+}
+
+void PuzzleSolution::addElement(unsigned int id)
+{
+    sol.back().push_back(id);
 }
 
 const vector<vector<unsigned int>> &PuzzleSolution::getSolution() const
@@ -24,4 +29,9 @@ vector<unsigned int> &PuzzleSolution::row(int num) const {
 
 unsigned long PuzzleSolution::size() const {
     return sol.size();
+}
+
+PuzzleSolution::PuzzleSolution()
+{
+    addRow();
 }
