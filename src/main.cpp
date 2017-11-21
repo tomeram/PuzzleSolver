@@ -15,7 +15,8 @@ int main(int argc, char** argv)
     vector<PuzzlePiece> pieces;
 
     try {
-        reader.readInput(argv[1], pieces);
+        string input = argv[1];
+        reader.readInput(input, pieces);
     } catch (int e) {
         cout << "Error: " << e << endl;
         exit(1);
