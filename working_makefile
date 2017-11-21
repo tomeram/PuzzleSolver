@@ -24,7 +24,7 @@ PuzzleSolver.o: src/PuzzleSolver.h src/Puzzle.h src/PuzzleSolution.h
 Puzzle.o: src/Puzzle.h src/PuzzlePiece.h
 	$(CXX) $(CXXFLAGS) -c src/Puzzle.cpp
 
-PuzzleSolution.o: src/PuzzleSolution.h src/PuzzlePiece.h
+PuzzleSolution.o: src/PuzzleSolution.h
 	$(CXX) $(CXXFLAGS) -c src/PuzzleSolution.cpp
 
 InputReader.o: src/InputReader.h src/PuzzlePiece.h

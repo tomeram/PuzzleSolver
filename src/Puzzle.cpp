@@ -24,6 +24,7 @@ unsigned long Puzzle::getPieceNumber() const {
     return pieces.size();
 }
 
-vector<PuzzlePiece> Puzzle::getPieces() {
+vector<PuzzlePiece> Puzzle::getPieces() const
+{
     return this->pieces;
 }

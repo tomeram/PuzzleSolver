@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 
 #include "Puzzle.h"
 #include "PuzzleSolution.h"
@@ -20,6 +21,7 @@ private:
     vector<string> exceptions;
 
     bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused);
+    set<int> rowLengths;
 
 public:
     PuzzleSolver(const Puzzle &puzzle);

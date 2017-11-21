@@ -7,7 +7,6 @@
 
 
 #include <vector>
-#include "PuzzlePiece.h"
 
 using namespace std;
 

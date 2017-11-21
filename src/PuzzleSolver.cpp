@@ -7,7 +7,12 @@
 
 PuzzleSolver::PuzzleSolver(const Puzzle &puzzle) : puzzle(puzzle)
 {
-    // TODO: Calculate possible row sizes
+    int size = static_cast<int>(puzzle.getPieces().size());
+    for (int i = 1; i <= size; i++) {
+        if (size % i == 0) {
+            rowLengths.insert(i);
+        }
+    }
 }
 
 bool PuzzleSolver::solve() {
@@ -36,6 +41,18 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
 
         if (this->solve(newSol, newUnused)) {
             return true;
+        }
+
+        auto search = rowLengths.find(i);
+
+        if (search != rowLengths.end()) {
+            vector<PuzzlePiece> newRowUnused = unused;
+            PuzzleSolution newRowSol = sol;
+            newRowSol.addRow();
+
+            if (this->solve(newRowSol, newRowUnused)) {
+                return true;
+            }
         }
     }
 
