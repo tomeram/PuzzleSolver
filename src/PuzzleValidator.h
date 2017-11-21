@@ -7,12 +7,13 @@
 
 
 #include "Puzzle.h"
+#include "PuzzleSolution.h"
 #include <iostream>
 #include <vector>
 
 class PuzzleValidator {
 public:
-    static bool validate(const Puzzle &puzzle);
+    static bool validate(const Puzzle &puzzle, const PuzzleSolution &sol);
 };
 
 

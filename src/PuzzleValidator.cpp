@@ -56,20 +56,18 @@ bool checkUsedPieces(vector<unsigned int> &usedPieces, unsigned int pieceNum)
     return true;
 }
 
-bool PuzzleValidator::validate(const Puzzle &puzzle)
+bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
 {
-    auto &sol = puzzle.getSolution();
-
     if (sol.empty()) {
         return false;
     }
 
     // Check row size to make sure all rows have the same size
-    auto rowSize = static_cast<unsigned int>(sol.at(0).size());
+    auto rowSize = static_cast<unsigned int>(sol.row(0).size());
     vector<unsigned int> usedPieces;
 
     for (unsigned int i = 0; i < sol.size(); i++) {
-        auto &row = sol[i];
+        auto &row = sol.row(i);
 
         // Make sure all rows have the same size
         if (row.size() != rowSize) {
@@ -89,7 +87,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle)
             /***** Check Neighbors *****/
             // Top
             if (i > 0) {
-                auto &top = puzzle.getPieceById(sol.at(i - 1).at(j));
+                auto &top = puzzle.getPieceById(sol.row(i - 1).at(j));
 
                 if (top.b + piece.t != 0) {
                     cout << "top" << endl;
@@ -99,7 +97,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle)
 
             // Bottom
             if (i < sol.size() - 1) {
-                auto &bot = puzzle.getPieceById(sol.at(i + 1).at(j));
+                auto &bot = puzzle.getPieceById(sol.row(i + 1).at(j));
 
                 if (bot.t + piece.b != 0) {
                     cout << "bot" << endl;
@@ -109,7 +107,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle)
 
             // Left
             if (j > 0) {
-                auto &left = puzzle.getPieceById(sol.at(i).at(j - 1));
+                auto &left = puzzle.getPieceById(sol.row(i).at(j - 1));
 
                 if (left.r + piece.l != 0) {
                     cout << "left" << endl;
@@ -119,7 +117,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle)
 
             // Right
             if (j < rowSize - 1) {
-                auto &right = puzzle.getPieceById(sol.at(i).at(j + 1));
+                auto &right = puzzle.getPieceById(sol.row(i).at(j + 1));
 
                 if (right.l + piece.r != 0) {
                     cout << "right" << endl;

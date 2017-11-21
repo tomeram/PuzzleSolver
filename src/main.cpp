@@ -3,6 +3,7 @@
 #include "PuzzlePiece.h"
 #include "PuzzleValidator.h"
 #include "InputReader.h"
+#include "PuzzleSolution.h"
 
 int main(int argc, char** argv)
 {
@@ -23,19 +24,9 @@ int main(int argc, char** argv)
 
     Puzzle puzzle(pieces);
 
-    vector<unsigned int> row1;
-    row1.push_back(1);
-    row1.push_back(2);
+    PuzzleSolution solution;
 
-    puzzle.addRow(row1);
-
-    vector<unsigned int> row2;
-    row2.push_back(3);
-    row2.push_back(4);
-
-    puzzle.addRow(row2);
-
-    bool t = PuzzleValidator::validate(puzzle);
+    bool t = PuzzleValidator::validate(puzzle, solution);
 
     cout << "The result is ";
 

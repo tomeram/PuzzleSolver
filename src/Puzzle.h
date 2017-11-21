@@ -16,17 +16,12 @@ public:
 
     ~Puzzle() = default;
 
-    void addRow(vector<unsigned int> &row);
-
-    const vector<vector<unsigned int>> &getSolution() const;
-
     const PuzzlePiece &getPieceById(int id) const;
 
     unsigned long getPieceNumber() const;
 
 private:
     vector<PuzzlePiece> pieces;
-    vector<vector<unsigned int>> solution;
 };
 
 
