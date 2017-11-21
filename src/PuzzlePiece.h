@@ -8,18 +8,16 @@
 
 class PuzzlePiece {
 public:
-    PuzzlePiece(int id, int l, int t, int r, int b);
-    ~PuzzlePiece();
-
-public:
     int id;
-
     int l;
     int t;
     int r;
     int b;
-    
-    void print();
+
+    PuzzlePiece(int id, int l, int t, int r, int b);
+    ~PuzzlePiece();
+
+    void print() const;
 };
 
 

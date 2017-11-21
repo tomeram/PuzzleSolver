@@ -6,43 +6,20 @@
 
 int main(int argc, char** argv)
 {
-    InputReader reader;
-
-    for (int  i = 0; i < argc; i++) {
-        cout << argv[i] << endl;
+    if (argc != 3) {
+        cout << "Please supply input and output file paths:" << endl << "./ex1 <input_file> <output_file>";
+        exit(1);
     }
 
+    InputReader reader;
     vector<PuzzlePiece> pieces;
 
     try {
-        reader.readInput("../test.txt", pieces);
-
-        cout << "Success" << endl;
+        reader.readInput(argv[1], pieces);
     } catch (int e) {
         cout << "Error: " << e << endl;
+        exit(1);
     }
-
-//    int i;
-//    vector<PuzzlePiece> pieces;
-//
-//    for (i = 1; i <= 1; i++)
-//    {
-//        PuzzlePiece test(i, 0, 0, 0, 0);
-//        pieces.push_back(test);
-//        test.print();
-//    }
-
-//    PuzzlePiece test1(1, 0, 0, 1, 1);
-//    pieces.push_back(test1);
-//
-//    PuzzlePiece test2(2, -1, 0, 0, 0);
-//    pieces.push_back(test2);
-//
-//    PuzzlePiece test3(3, 0, -1, 0, 0);
-//    pieces.push_back(test3);
-//
-//    PuzzlePiece test4(4, 0, 0, 0, 0);
-//    pieces.push_back(test4);
 
     Puzzle puzzle(pieces);
 

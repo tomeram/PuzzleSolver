@@ -29,18 +29,20 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
 {
 
     ifstream fin(path);
+
     if (!fin.good()){
         //error I/O
         // TODO
         throw 1;
     }
+
     string s_name, s_size;
     getline(fin, s_name, '=');
 //    if ( NO = ){
     // TODO
 //        //error
 //    }
-    s_name.erase( remove(s_name.begin(), s_name.end(), ' '), s_name.end());
+    s_name.erase(remove(s_name.begin(), s_name.end(), ' '), s_name.end());
     if ( s_name != "NumElements" ) {
         // TODO
         //error
