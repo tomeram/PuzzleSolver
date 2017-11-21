@@ -5,5 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_FLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic-errors -DNDEBUG")
 
+set(CMAKE_CXX_FLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic-errors -DNDEBUG")
+
 set(SOURCE_FILES src/main.cpp src/PuzzlePiece.cpp src/PuzzlePiece.h src/InputReader.cpp src/InputReader.h src/PuzzleValidator.cpp src/PuzzleValidator.h src/Puzzle.cpp src/Puzzle.h)
 add_executable(PuzzleSolver ${SOURCE_FILES})
