@@ -8,13 +8,12 @@
 
 using namespace std;
 
-PuzzlePiece::PuzzlePiece(int id, int l, int t, int r, int b) : id(id), l(l), t(t), r(r), b(b) {}
-PuzzlePiece::~PuzzlePiece()
-{
-    cout << "Destroying " << id << endl;
-}
+PuzzlePiece::PuzzlePiece(int id, int l, int t, int r, int b) : id(id), l(l), t(t), r(r), b(b)
+{}
+
+PuzzlePiece::~PuzzlePiece() = default;
 
 void PuzzlePiece::print()
 {
-    cout << "Test" << endl;
+    cout << "Printing " << id << endl;
 }
