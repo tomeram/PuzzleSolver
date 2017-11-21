@@ -4,6 +4,11 @@
 
 #include "PuzzleSolution.h"
 
+PuzzleSolution::PuzzleSolution()
+{
+    addRow();
+}
+
 void PuzzleSolution::addRow()
 {
     this->sol.emplace_back();
@@ -23,15 +28,11 @@ bool PuzzleSolution::empty() const {
     return this->sol.empty();
 }
 
-vector<unsigned int> &PuzzleSolution::row(int num) const {
+vector<unsigned int> &PuzzleSolution::row(int num) const
+{
     return const_cast<vector<unsigned int> &>(sol.at(num));
 }
 
 unsigned long PuzzleSolution::size() const {
     return sol.size();
-}
-
-PuzzleSolution::PuzzleSolution()
-{
-    addRow();
 }

@@ -16,7 +16,7 @@ private:
     vector<vector<unsigned int>> sol;
 
 public:
-    PuzzleSolution();
+    explicit PuzzleSolution();
 
     void addRow();
 
