@@ -1,6 +1,6 @@
 CXX = g++
 #put all your object files here
-OBJS = PuzzlePiece.o InputReader.o PuzzleSolution.o Puzzle.o PuzzleValidator.o main.o #objects should be placed here! 
+OBJS = PuzzlePiece.o InputReader.o PuzzleSolution.o Puzzle.o PuzzleSolver.o PuzzleValidator.o main.o #objects should be placed here!
 #The executabel filename DON'T CHANGE
 EXEC = ex1
 CXXFLAGS = -std=c++11 -Wall -Wextra \
@@ -17,6 +17,9 @@ main.o: src/InputReader.h src/PuzzleSolution.h src/PuzzlePiece.h src/PuzzleValid
 
 PuzzleValidator.o: src/PuzzleValidator.h src/PuzzlePiece.h src/Puzzle.h
 	$(CXX) $(CXXFLAGS) -c src/PuzzleValidator.cpp
+
+PuzzleSolver.o: src/PuzzleSolver.h src/Puzzle.h src/PuzzleSolution.h
+	$(CXX) $(CXXFLAGS) -c src/PuzzleSolver.cpp
 
 Puzzle.o: src/Puzzle.h src/PuzzlePiece.h
 	$(CXX) $(CXXFLAGS) -c src/Puzzle.cpp
