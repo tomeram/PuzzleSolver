@@ -28,6 +28,8 @@ public:
     bool empty() const;
 
     vector<unsigned int> &row(int num) const;
+
+    void print() const;
 };
 
 

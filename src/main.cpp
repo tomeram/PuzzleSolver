@@ -31,12 +31,11 @@ int main(int argc, char** argv)
     cout << "The result is ";
 
     if (t) {
-        cout << "correct";
+        cout << "correct" << endl;
+        solver.getSol().print();
     } else {
-        cout << "wrong";
+        cout << "wrong" << endl;
     }
-
-    cout << endl;
 
     return 0;
 }

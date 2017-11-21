@@ -42,19 +42,28 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
         if (this->solve(newSol, newUnused)) {
             return true;
         }
+    }
 
-        auto search = rowLengths.find(i);
+    auto currRow = static_cast<int>(sol.getSolution().size()) - 1;
+    unsigned int currRowSize = sol.getSolution().at(currRow).size();
+    auto search = rowLengths.find(currRowSize);
 
-        if (search != rowLengths.end()) {
-            vector<PuzzlePiece> newRowUnused = unused;
-            PuzzleSolution newRowSol = sol;
-            newRowSol.addRow();
+    if (search != rowLengths.end()) {
+        if (currRow != 0 && (sol.getSolution().at(currRow - 1).size() != currRowSize)) {
+            return false;
+        }
 
-            if (this->solve(newRowSol, newRowUnused)) {
-                return true;
-            }
+        PuzzleSolution newRowSol = sol;
+        newRowSol.addRow();
+
+        if (this->solve(newRowSol, unused)) {
+            return true;
         }
     }
 
     return false;
+}
+
+const PuzzleSolution &PuzzleSolver::getSol() const {
+    return sol;
 }

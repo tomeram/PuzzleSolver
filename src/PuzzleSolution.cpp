@@ -2,6 +2,7 @@
 // Created by Tomer Amir on 21/11/2017.
 //
 
+#include <iostream>
 #include "PuzzleSolution.h"
 
 PuzzleSolution::PuzzleSolution()
@@ -35,4 +36,15 @@ vector<unsigned int> &PuzzleSolution::row(int num) const
 
 unsigned long PuzzleSolution::size() const {
     return sol.size();
+}
+
+void PuzzleSolution::print() const
+{
+    for (auto row: sol) {
+        for (auto elem: row) {
+            cout << elem << " ";
+        }
+
+        cout << endl;
+    }
 }

@@ -27,6 +27,8 @@ public:
     PuzzleSolver(const Puzzle &puzzle);
 
     bool solve();
+
+    const PuzzleSolution &getSol() const;
 };
 
 
