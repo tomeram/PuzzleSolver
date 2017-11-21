@@ -25,7 +25,7 @@ bool isPuzzle(int id , int l, int t, int r, int b)
     return validSide(l) && validSide(t) && validSide(r) && validSide(b);
 }
 
-vector<PuzzlePiece> InputReader::readInput(string path) throw(int)
+void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
 {
 
     ifstream fin(path);
@@ -62,7 +62,6 @@ vector<PuzzlePiece> InputReader::readInput(string path) throw(int)
     string line;
     int id, a, b, c, d;
     int i = 0,j = 0;
-    vector<PuzzlePiece> puzzles;
 
     while (getline(fin, line)) {
         istringstream buf(line);
@@ -113,7 +112,7 @@ vector<PuzzlePiece> InputReader::readInput(string path) throw(int)
             }
             if(j < size){
                 PuzzlePiece p(id,a,b,c,d);
-                puzzles.push_back(p);
+                pieces.push_back(p);
                 j++;
             } else {
                 // TODO
@@ -122,6 +121,5 @@ vector<PuzzlePiece> InputReader::readInput(string path) throw(int)
         }
     }
     fin.close();
-    return puzzles;
 }
 

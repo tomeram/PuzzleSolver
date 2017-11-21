@@ -14,7 +14,7 @@ using namespace std;
 
 class InputReader {
 public:
-    vector<PuzzlePiece> readInput(string path) throw(int);
+    void readInput(string path, vector<PuzzlePiece> &pieces) throw(int);
 };
 
 

@@ -12,8 +12,10 @@ int main(int argc, char** argv)
         cout << argv[i] << endl;
     }
 
+    vector<PuzzlePiece> pieces;
+
     try {
-        vector<PuzzlePiece> test =  reader.readInput("../test.txt");
+        reader.readInput("../test.txt", pieces);
 
         cout << "Success" << endl;
     } catch (int e) {
@@ -21,7 +23,7 @@ int main(int argc, char** argv)
     }
 
 //    int i;
-    vector<PuzzlePiece> pieces;
+//    vector<PuzzlePiece> pieces;
 //
 //    for (i = 1; i <= 1; i++)
 //    {
@@ -30,17 +32,17 @@ int main(int argc, char** argv)
 //        test.print();
 //    }
 
-    PuzzlePiece test1(1, 0, 0, 1, 1);
-    pieces.push_back(test1);
-
-    PuzzlePiece test2(2, -1, 0, 0, 0);
-    pieces.push_back(test2);
-
-    PuzzlePiece test3(3, 0, -1, 0, 0);
-    pieces.push_back(test3);
-
-    PuzzlePiece test4(4, 0, 0, 0, 0);
-    pieces.push_back(test4);
+//    PuzzlePiece test1(1, 0, 0, 1, 1);
+//    pieces.push_back(test1);
+//
+//    PuzzlePiece test2(2, -1, 0, 0, 0);
+//    pieces.push_back(test2);
+//
+//    PuzzlePiece test3(3, 0, -1, 0, 0);
+//    pieces.push_back(test3);
+//
+//    PuzzlePiece test4(4, 0, 0, 0, 0);
+//    pieces.push_back(test4);
 
     Puzzle puzzle(pieces);
 
