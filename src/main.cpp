@@ -7,7 +7,8 @@
 int main(int argc, char** argv)
 {
     if (argc != 3) {
-        cout << "Please supply input and output file paths:" << endl << argv[0] << " <input_file> <output_file>";
+        cout << "Please supply input and output file paths:" << endl
+             << argv[0] << " <input_file> <output_file>" << endl;
         return 1;
     }
 
