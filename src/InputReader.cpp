@@ -4,7 +4,6 @@
 
 #include "InputReader.h"
 #include <fstream>
-#include <vector>
 #include <sstream>
 #include <iostream>
 
@@ -42,7 +41,9 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
     // TODO
 //        //error
 //    }
-    s_name.erase(remove(s_name.begin(), s_name.end(), ' '), s_name.end());
+
+    string::size_type location = s_name.find(" ");
+    s_name = s_name.substr(0, location);
     if ( s_name != "NumElements" ) {
         // TODO
         //error

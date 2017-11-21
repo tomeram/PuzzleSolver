@@ -7,8 +7,8 @@
 int main(int argc, char** argv)
 {
     if (argc != 3) {
-        cout << "Please supply input and output file paths:" << endl << "./ex1 <input_file> <output_file>";
-        exit(1);
+        cout << "Please supply input and output file paths:" << endl << argv[0] << " <input_file> <output_file>";
+        return 1;
     }
 
     vector<PuzzlePiece> pieces;
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
         InputReader::readInput(argv[1], pieces);
     } catch (int e) {
         cout << "Error: " << e << endl;
-        exit(1);
+        return 1;
     }
 
     Puzzle puzzle(pieces);

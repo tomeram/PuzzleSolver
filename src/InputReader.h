@@ -6,9 +6,9 @@
 #define PUZZLESOLVER_INPUTREADER_H
 
 
-#include "PuzzlePiece.h"
-
+#include <vector>
 #include <string>
+#include "PuzzlePiece.h"
 
 using namespace std;
 
