@@ -16,10 +16,10 @@ PuzzleSolver::PuzzleSolver(const Puzzle &puzzle) : puzzle(puzzle)
 }
 
 bool PuzzleSolver::solve() {
-    return this->solve(PuzzleSolution(), this->puzzle.getPieces());
+    return this->solve(PuzzleSolution(), this->puzzle.getPieces(), getEdges());
 }
 
-bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
+bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges) {
     // TODO: Remove comments
 //    static int calls = 0;
 //
@@ -42,8 +42,9 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
     for (unsigned int i = 0; i < unused.size(); i++) {
         vector<PuzzlePiece> newUnused = unused;
         PuzzleSolution newSol = sol;
+        Edges newEdges = edges;
 
-        if ((last = addNextElement(last, newSol, newUnused)) == -1) {
+        if ((last = addNextElement(last, newSol, newUnused, newEdges)) == -1) {
             break;
         }
 
@@ -52,24 +53,29 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
 //
 //        newUnused.erase(newUnused.begin() + i);
 
-        if (this->solve(newSol, newUnused)) {
+        if (this->solve(newSol, newUnused, newEdges)) {
             return true;
         }
     }
 
     auto currRow = static_cast<int>(sol.getSolution().size()) - 1;
     unsigned int currRowSize = sol.getSolution().at(currRow).size();
+
+    if (currRow != 0 && (sol.getSolution().at(currRow - 1).size() != currRowSize)) {
+        return false;
+    }
+
     auto search = rowLengths.find(currRowSize);
 
     if (search != rowLengths.end()) {
-        if (currRow != 0 && (sol.getSolution().at(currRow - 1).size() != currRowSize)) {
-            return false;
-        }
-
         PuzzleSolution newRowSol = sol;
         newRowSol.addRow();
 
-        if (this->solve(newRowSol, unused)) {
+        if (!sumEdges(sol.getSolution().back(), unused)) {
+            return false;
+        }
+
+        if (this->solve(newRowSol, unused, edges)) {
             return true;
         }
     }
@@ -81,13 +87,20 @@ const PuzzleSolution &PuzzleSolver::getSol() const {
     return sol;
 }
 
-int PuzzleSolver::addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePiece> &unused) {
+int PuzzleSolver::addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePiece> &unused, Edges &edges) {
 
     auto matrix = sol.getSolution();
     auto size = matrix.size();
 
     if (matrix.size() > 1) {
         if (matrix.at(size - 1).size() == matrix.at(size - 2).size()) {
+            return -1;
+        }
+
+        unsigned int rowSize = matrix.at(0).size();
+        unsigned int bottomSize = edges.bottom.size();
+
+        if (rowSize > bottomSize && bottomSize < unused.size()) {
             return -1;
         }
     }
@@ -97,8 +110,8 @@ int PuzzleSolver::addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePie
 
         bool accepted = checkNewPiece(sol.getSolution(), elem);
 
-        // TODO: Check elem
         if (accepted) {
+            edges.removePiece(elem.id);
             sol.addElement(static_cast<unsigned int>(elem.id));
 
             unused.erase(unused.begin() + i);
@@ -141,4 +154,51 @@ bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const 
     }
 
     return true;
+}
+
+Edges PuzzleSolver::getEdges() {
+    Edges res;
+
+    for (PuzzlePiece piece: puzzle.getPieces()) {
+        if (piece.l == 0) {
+            res.left.insert(piece.id);
+        }
+
+        if (piece.t == 0) {
+            res.top.insert(piece.id);
+        }
+
+        if (piece.r == 0) {
+            res.right.insert(piece.id);
+        }
+
+        if (piece.b == 0) {
+            res.bottom.insert(piece.id);
+        }
+    }
+
+    return res;
+}
+
+bool PuzzleSolver::sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces) {
+    int hor = 0;
+    int ver = 0;
+
+    for (PuzzlePiece p: pieces) {
+        hor += p.l + p.r;
+        ver += p.t + p.b;
+    }
+
+    for (int i: lastRow) {
+        ver += puzzle.getPieces().at(i - 1).b;
+    }
+
+    return (hor == 0 && ver == 0);
+}
+
+void Edges::removePiece(int id) {
+    left.erase(id);
+    top.erase(id);
+    right.erase(id);
+    bottom.erase(id);
 }
