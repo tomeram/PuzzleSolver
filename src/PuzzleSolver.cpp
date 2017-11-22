@@ -5,21 +5,37 @@
 #include "PuzzleSolver.h"
 #include "PuzzleValidator.h"
 
+string buildTypeId(int l, int t, int r, int b)
+{
+    return to_string(l) + " " + to_string(t) + " " + to_string(r) + " " + to_string(b);
+}
+
 PuzzleSolver::PuzzleSolver(const Puzzle &puzzle) : puzzle(puzzle)
 {
     int size = static_cast<int>(puzzle.getPieces().size());
+
     for (int i = 1; i <= size; i++) {
         if (size % i == 0) {
             rowLengths.insert(i);
         }
     }
+
+    for (PuzzlePiece p: puzzle.getPieces()) {
+        string type = buildTypeId(p.l, p.t, p.r, p.b);
+
+        if (types.find(type) == types.end()) {
+            types[type] = vector<int>();
+        }
+
+        types[type].push_back(p.id);
+    }
 }
 
 bool PuzzleSolver::solve() {
-    return this->solve(PuzzleSolution(), this->puzzle.getPieces(), getEdges());
+    return this->solve(PuzzleSolution(), this->puzzle.getPieces(), getEdges(), types);
 }
 
-bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges) {
+bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, map<string, vector<int>> types) {
     // TODO: Remove comments
 //    static int calls = 0;
 //
@@ -37,23 +53,35 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
         }
     }
 
-    int last = -1;
+    vector<string> goodTypes = addNextElement(sol, unused, edges, types);
 
-    for (unsigned int i = 0; i < unused.size(); i++) {
+    for (const string &type: goodTypes) {
         vector<PuzzlePiece> newUnused = unused;
         PuzzleSolution newSol = sol;
         Edges newEdges = edges;
+        map<string, vector<int>> newTypes = types;
 
-        if ((last = addNextElement(last, newSol, newUnused, newEdges)) == -1) {
-            break;
+        vector<int> &usedType = newTypes[type];
+
+        ///
+        int id = usedType.at(0);
+        usedType.erase(usedType.begin());
+
+        if (usedType.empty()) {
+            newTypes.erase(type);
+        }
+        ///
+
+        newEdges.removePiece(id);
+        newSol.addElement(static_cast<unsigned int>(id));
+
+        for (unsigned int i = 0; i < unused.size(); i++) {
+            if (unused.at(i).id == id) {
+                newUnused.erase(newUnused.begin() + i);
+            }
         }
 
-        // TODO: Remove comments
-//        newSol.addElement(static_cast<unsigned int>(unused.at(i).id));
-//
-//        newUnused.erase(newUnused.begin() + i);
-
-        if (this->solve(newSol, newUnused, newEdges)) {
+        if (this->solve(newSol, newUnused, newEdges, newTypes)) {
             return true;
         }
     }
@@ -75,7 +103,7 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
             return false;
         }
 
-        if (this->solve(newRowSol, unused, edges)) {
+        if (this->solve(newRowSol, unused, edges, types)) {
             return true;
         }
     }
@@ -87,40 +115,47 @@ const PuzzleSolution &PuzzleSolver::getSol() const {
     return sol;
 }
 
-int PuzzleSolver::addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePiece> &unused, Edges &edges) {
-
+vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
+                                         map<string, vector<int>> types)
+{
+    vector<string> res;
     auto matrix = sol.getSolution();
     auto size = matrix.size();
 
     if (matrix.size() > 1) {
         if (matrix.at(size - 1).size() == matrix.at(size - 2).size()) {
-            return -1;
+            return res;
         }
 
         unsigned int rowSize = matrix.at(0).size();
         unsigned int bottomSize = edges.bottom.size();
 
         if (rowSize > bottomSize && bottomSize < unused.size()) {
-            return -1;
+            return res;
         }
     }
 
-    for (unsigned int i = last + 1; i < unused.size(); i++) {
-        PuzzlePiece &elem = unused.at(i);
+    int sides[] = {-1, 0, 1};
 
-        bool accepted = checkNewPiece(sol.getSolution(), elem);
+    for (int l: sides) {
+        for (int t: sides) {
 
-        if (accepted) {
-            edges.removePiece(elem.id);
-            sol.addElement(static_cast<unsigned int>(elem.id));
+            if (checkNewPiece(sol.getSolution(), PuzzlePiece(0, l, t, 0, 0))) {
+                for (int r: sides) {
+                    for (int b: sides) {
 
-            unused.erase(unused.begin() + i);
+                        string typeID = buildTypeId(l, t, r, b);
 
-            return i;
+                        if (types.find(typeID) != types.end()) {
+                            res.push_back(typeID);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    return -1;
+    return res;
 }
 
 bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece) {

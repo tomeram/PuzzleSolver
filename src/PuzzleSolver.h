@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <map>
 
 #include "Puzzle.h"
 #include "PuzzleSolution.h"
@@ -26,12 +27,14 @@ private:
     Puzzle puzzle;
     PuzzleSolution sol;
     set<int> rowLengths;
+    map<string, vector<int>> types;
 
-    bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges);
+    bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, map<string, vector<int>> types);
 
     bool checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece);
 
-    int addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePiece> &unused, Edges &edges);
+    vector<string> addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
+                               map<string, vector<int>> types);
 
     bool sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces);
 

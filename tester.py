@@ -46,9 +46,10 @@ def main():
                 i += 1
                 f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
-    res = os.popen('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt test.out').read()
+    # res = os.popen('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt test.out').read()
+    # print res
 
-    print res
+    os.system('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt test.out')
 
 
 if __name__ == '__main__':
