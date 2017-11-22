@@ -18,10 +18,13 @@ class PuzzleSolver {
 private:
     Puzzle puzzle;
     PuzzleSolution sol;
-    vector<string> exceptions;
+    set<int> rowLengths;
 
     bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused);
-    set<int> rowLengths;
+
+    bool checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece);
+
+    int addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePiece> &unused);
 
 public:
     PuzzleSolver(const Puzzle &puzzle);

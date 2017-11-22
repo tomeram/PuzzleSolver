@@ -20,7 +20,13 @@ bool PuzzleSolver::solve() {
 }
 
 bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
-    // TODO
+    // TODO: Remove comments
+//    static int calls = 0;
+//
+//    calls++;
+//
+//    cout << "Call: " << calls << endl;
+
     if (unused.empty()) {
         if (PuzzleValidator::validate(puzzle, sol)) {
             this->sol = sol;
@@ -31,13 +37,20 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
         }
     }
 
+    int last = -1;
+
     for (unsigned int i = 0; i < unused.size(); i++) {
         vector<PuzzlePiece> newUnused = unused;
         PuzzleSolution newSol = sol;
 
-        newSol.addElement(static_cast<unsigned int>(unused.at(i).id));
+        if ((last = addNextElement(last, newSol, newUnused)) == -1) {
+            break;
+        }
 
-        newUnused.erase(newUnused.begin() + i);
+        // TODO: Remove comments
+//        newSol.addElement(static_cast<unsigned int>(unused.at(i).id));
+//
+//        newUnused.erase(newUnused.begin() + i);
 
         if (this->solve(newSol, newUnused)) {
             return true;
@@ -66,4 +79,66 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused) {
 
 const PuzzleSolution &PuzzleSolver::getSol() const {
     return sol;
+}
+
+int PuzzleSolver::addNextElement(int last, PuzzleSolution &sol, vector<PuzzlePiece> &unused) {
+
+    auto matrix = sol.getSolution();
+    auto size = matrix.size();
+
+    if (matrix.size() > 1) {
+        if (matrix.at(size - 1).size() == matrix.at(size - 2).size()) {
+            return -1;
+        }
+    }
+
+    for (unsigned int i = last + 1; i < unused.size(); i++) {
+        PuzzlePiece &elem = unused.at(i);
+
+        bool accepted = checkNewPiece(sol.getSolution(), elem);
+
+        // TODO: Check elem
+        if (accepted) {
+            sol.addElement(static_cast<unsigned int>(elem.id));
+
+            unused.erase(unused.begin() + i);
+
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece) {
+    int row = sol.size() - 1;
+    int col = sol.at(row).size();
+
+    // Top
+    if (row > 0) {
+        auto &top = puzzle.getPieceById(sol.at(row - 1).at(col));
+
+        if (top.b + piece.t != 0) {
+            return false;
+        }
+    } else {
+        if (piece.t != 0) {
+            return false;
+        }
+    }
+
+    // Left
+    if (col > 0) {
+        auto &left = puzzle.getPieceById(sol.at(row).at(col - 1));
+
+        if (left.r + piece.l != 0) {
+            return false;
+        }
+    } else {
+        if (piece.l != 0) {
+            return false;
+        }
+    }
+
+    return true;
 }

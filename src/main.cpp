@@ -7,6 +7,8 @@
 
 int main(int argc, char** argv)
 {
+    clock_t begin = clock();
+
     if (argc != 3) {
         cout << "Please supply input and output file paths:" << endl
              << argv[0] << " <input_file> <output_file>" << endl;
@@ -36,6 +38,11 @@ int main(int argc, char** argv)
     } else {
         cout << "wrong" << endl;
     }
+
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+    cout << "Total time: " << elapsed_secs << endl;
 
     return 0;
 }
