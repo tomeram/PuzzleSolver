@@ -33,8 +33,8 @@ def generate_puzzle(x, y):
 
 
 def main():
-    x = 6
-    y = 6
+    x = 7
+    y = 7
 
     with open('./ignored/tester.txt', 'w+') as f:
         f.write('NumElements=' + str(x * y) + '\n')
