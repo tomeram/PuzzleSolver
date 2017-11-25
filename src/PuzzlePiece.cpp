@@ -13,7 +13,7 @@ PuzzlePiece::PuzzlePiece(int id, int l, int t, int r, int b) : id(id), l(l), t(t
 
 PuzzlePiece::~PuzzlePiece() = default;
 
-void PuzzlePiece::print()
+void PuzzlePiece::print() const
 {
-    cout << "Printing " << id << endl;
+    cout << id << " " << l << " " << t << " " << r << " " << b << endl;
 }

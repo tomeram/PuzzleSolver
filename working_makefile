@@ -1,0 +1,37 @@
+CXX = g++-5.3.0
+#put all your object files here
+OBJS = PuzzlePiece.o InputReader.o PuzzleSolution.o Puzzle.o PuzzleSolver.o PuzzleValidator.o main.o #objects should be placed here!
+#The executabel filename DON'T CHANGE
+EXEC = ex1
+CXXFLAGS = -std=c++14 -Wall -Wextra \
+-Werror -pedantic-errors -DNDEBUG
+
+$(EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $@
+
+#a rule for building a simple c++ source file
+#use g++-5.3.0 -MM src/main.cpp to see dependencies
+
+main.o: src/InputReader.h src/PuzzleSolution.h src/PuzzlePiece.h src/PuzzleValidator.h src/Puzzle.h
+	$(CXX) $(CXXFLAGS) -c src/main.cpp
+
+PuzzleValidator.o: src/PuzzleValidator.h src/PuzzlePiece.h src/Puzzle.h
+	$(CXX) $(CXXFLAGS) -c src/PuzzleValidator.cpp
+
+PuzzleSolver.o: src/PuzzleSolver.h src/Puzzle.h src/PuzzleSolution.h
+	$(CXX) $(CXXFLAGS) -c src/PuzzleSolver.cpp
+
+Puzzle.o: src/Puzzle.h src/PuzzlePiece.h
+	$(CXX) $(CXXFLAGS) -c src/Puzzle.cpp
+
+PuzzleSolution.o: src/PuzzleSolution.h
+	$(CXX) $(CXXFLAGS) -c src/PuzzleSolution.cpp
+
+InputReader.o: src/InputReader.h src/PuzzlePiece.h
+	$(CXX) $(CXXFLAGS) -c src/InputReader.cpp
+
+PuzzlePiece.o: src/PuzzlePiece.h
+	$(CXX) $(CXXFLAGS) -c src/PuzzlePiece.cpp
+
+clean:
+	rm -f $(OBJS) $(EXEC)

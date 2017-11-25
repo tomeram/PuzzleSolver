@@ -6,15 +6,15 @@
 #define PUZZLESOLVER_INPUTREADER_H
 
 
-#include "PuzzlePiece.h"
-
+#include <vector>
 #include <string>
+#include "PuzzlePiece.h"
 
 using namespace std;
 
 class InputReader {
 public:
-    PuzzlePiece* readInput(string path);
+    static void readInput(string path, vector<PuzzlePiece> &pieces) throw(int);
 };
 
 
