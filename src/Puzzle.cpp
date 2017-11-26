@@ -5,14 +5,9 @@
 #include <algorithm>
 #include "Puzzle.h"
 
-bool compare(const PuzzlePiece &piece1, const PuzzlePiece &piece2)
-{
-    return piece1.id < piece2.id;
-}
-
 Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(move(newPieces))
 {
-    sort(pieces.begin(), pieces.end(), compare);
+    sort(pieces.begin(), pieces.end(), PuzzlePiece::compare);
 }
 
 const PuzzlePiece &Puzzle::getPieceById(int id) const {

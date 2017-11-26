@@ -10,28 +10,28 @@ $(EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@
 
 #a rule for building a simple c++ source file
-#use g++-5.3.0 -MM src/main.cpp to see dependencies
+#use g++-5.3.0 -MM main.cpp to see dependencies
 
-main.o: src/InputReader.h src/PuzzleSolution.h src/PuzzlePiece.h src/PuzzleValidator.h src/Puzzle.h
-	$(CXX) $(CXXFLAGS) -c src/main.cpp
+main.o: InputReader.h PuzzleSolution.h PuzzlePiece.h PuzzleValidator.h Puzzle.h
+	$(CXX) $(CXXFLAGS) -c main.cpp
 
-PuzzleValidator.o: src/PuzzleValidator.h src/PuzzlePiece.h src/Puzzle.h
-	$(CXX) $(CXXFLAGS) -c src/PuzzleValidator.cpp
+PuzzleValidator.o: PuzzleValidator.h PuzzlePiece.h Puzzle.h
+	$(CXX) $(CXXFLAGS) -c PuzzleValidator.cpp
 
-PuzzleSolver.o: src/PuzzleSolver.h src/Puzzle.h src/PuzzleSolution.h
-	$(CXX) $(CXXFLAGS) -c src/PuzzleSolver.cpp
+PuzzleSolver.o: PuzzleSolver.h Puzzle.h PuzzleSolution.h
+	$(CXX) $(CXXFLAGS) -c PuzzleSolver.cpp
 
-Puzzle.o: src/Puzzle.h src/PuzzlePiece.h
-	$(CXX) $(CXXFLAGS) -c src/Puzzle.cpp
+Puzzle.o: Puzzle.h PuzzlePiece.h
+	$(CXX) $(CXXFLAGS) -c Puzzle.cpp
 
-PuzzleSolution.o: src/PuzzleSolution.h
-	$(CXX) $(CXXFLAGS) -c src/PuzzleSolution.cpp
+PuzzleSolution.o: PuzzleSolution.h
+	$(CXX) $(CXXFLAGS) -c PuzzleSolution.cpp
 
-InputReader.o: src/InputReader.h src/PuzzlePiece.h
-	$(CXX) $(CXXFLAGS) -c src/InputReader.cpp
+InputReader.o: InputReader.h PuzzlePiece.h
+	$(CXX) $(CXXFLAGS) -c InputReader.cpp
 
-PuzzlePiece.o: src/PuzzlePiece.h
-	$(CXX) $(CXXFLAGS) -c src/PuzzlePiece.cpp
+PuzzlePiece.o: PuzzlePiece.h
+	$(CXX) $(CXXFLAGS) -c PuzzlePiece.cpp
 
 clean:
 	rm -f $(OBJS) $(EXEC)

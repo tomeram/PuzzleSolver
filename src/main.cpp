@@ -1,48 +1,74 @@
 #include <iostream>
+#include <fstream>
 
 #include "PuzzlePiece.h"
 #include "PuzzleValidator.h"
 #include "InputReader.h"
 #include "PuzzleSolver.h"
 
+void printUsage(const string &arg0)
+{
+    cout << "Please supply correct input and output file paths:" << endl
+         << arg0 << " <input_file> <output_file>" << endl;
+}
+
 int main(int argc, char** argv)
 {
-    clock_t begin = clock();
-
     if (argc != 3) {
-        cout << "Please supply input and output file paths:" << endl
-             << argv[0] << " <input_file> <output_file>" << endl;
+        printUsage(argv[0]);
         return 1;
     }
 
     vector<PuzzlePiece> pieces;
 
+    ofstream outputFile;
+    outputFile.open((argv[2]));
+
+    InputReader reader(&outputFile);
+
     try {
-        InputReader::readInput(argv[1], pieces);
+        reader.readInput(argv[1], pieces);
     } catch (int e) {
-        cout << "Error: " << e << endl;
+        switch (e) {
+            case 1:
+                printUsage(argv[0]);
+                break;
+            case 2:
+                cout << "Invalid file format" << endl;
+                break;
+            case 3:
+                // General Error - handled in InputReader
+                break;
+            default:
+                cout << "Unhandled exception: " << e << endl;
+                break;
+        }
+
+        return 1;
+    }
+
+    if (!reader.valid) {
+        outputFile.close();
+
         return 1;
     }
 
     Puzzle puzzle(pieces);
 
-    PuzzleSolver solver(puzzle);
+    PuzzleSolver solver(puzzle, &outputFile);
 
-    bool t = solver.solve();
-
-    cout << "The result is ";
-
-    if (t) {
-        cout << "correct" << endl;
-        solver.getSol().print();
-    } else {
-        cout << "wrong" << endl;
+    if (!solver.isValid()) {
+        outputFile.close();
+        return 1;
     }
 
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    if (solver.solve()) {
+        solver.getSol().print(&outputFile);
+    } else {
+        outputFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
+    }
 
-    cout << "Total time: " << elapsed_secs << endl;
+    outputFile.close();
 
     return 0;
 }
