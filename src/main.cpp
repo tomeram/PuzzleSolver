@@ -60,7 +60,12 @@ int main(int argc, char** argv)
 
     Puzzle puzzle(pieces);
 
-    PuzzleSolver solver(puzzle);
+    PuzzleSolver solver(puzzle, &outputFile);
+
+    if (!solver.isValid()) {
+        outputFile.close();
+        return 1;
+    }
 
     bool t = solver.solve();
 

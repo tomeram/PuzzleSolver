@@ -10,7 +10,8 @@ string buildTypeId(int l, int t, int r, int b)
     return to_string(l) + " " + to_string(t) + " " + to_string(r) + " " + to_string(b);
 }
 
-PuzzleSolver::PuzzleSolver(const Puzzle &puzzle) : puzzle(puzzle)
+
+PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output) : puzzle(puzzle), out(output)
 {
     int size = static_cast<int>(puzzle.getPieces().size());
 
@@ -29,11 +30,184 @@ PuzzleSolver::PuzzleSolver(const Puzzle &puzzle) : puzzle(puzzle)
 
         types[type].push_back(p.id);
     }
+
+    checkInput();
 }
+
+
+bool checkEdgeByLength(vector<PuzzlePiece> pieces, int row, int col, int l, int t, int r, int b)
+{
+    if (pieces.empty()) {
+        return  (t >= row && b >= col && l >= col && r>= col);
+    }
+
+    auto p = pieces.back();
+
+    pieces.pop_back();
+
+    if (p.l == 0 && checkEdgeByLength(pieces, row, col, l + 1, t, r, b)) {
+        return true;
+    }
+
+    if (p.t == 0 && checkEdgeByLength(pieces, row, col, l, t + 1, r, b)) {
+        return true;
+    }
+
+    if (p.r == 0 && checkEdgeByLength(pieces, row, col, l, t, r + 1, b)) {
+        return true;
+    }
+
+    if (p.b == 0 && checkEdgeByLength(pieces, row, col, l, t, r, b + 1)) {
+        return true;
+    }
+
+    return false;
+}
+
+
+bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
+{
+    auto newRows = rowLengths;
+
+    for (auto row: rowLengths) {
+        int col = pieces.size() / row;
+
+        if (!checkEdgeByLength(pieces, row, col, 0, 0, 0, 0)) {
+            newRows.erase(row);
+        }
+    }
+
+    rowLengths = newRows;
+
+    return !rowLengths.empty();
+}
+
+
+bool sumPieces(const vector<PuzzlePiece> &pieces)
+{
+    int v = 0;
+    int h = 0;
+
+    for (PuzzlePiece p: pieces) {
+        v += p.t + p.b;
+        h += p.l + p.r;
+    }
+
+    return (v == 0) && (h == 0);
+}
+
+
+void PuzzleSolver::checkInput()
+{
+    const vector<PuzzlePiece> &pieces = puzzle.getPieces();
+
+    if (!checkEdges(pieces, rowLengths)) {
+        *(out) << "Cannot solve puzzle: wrong number of straight edges" << endl;
+    }
+
+    if (pieces.size() > 1) {
+        checkCorners();
+    }
+
+    if (!sumPieces(pieces)) {
+        *(out) << "Cannot solve puzzle: sum of edges is not zero" << endl;
+        valid = false;
+    }
+}
+
+
+
+bool checkRow(const Puzzle &puzzle)
+{
+    bool L = false, R = false;
+
+    for (PuzzlePiece p: puzzle.getPieces()) {
+        if (p.t != 0 || p.b != 0) {
+            return false;
+        }
+
+        if (p.l == 0) {
+            L = true;
+        }
+        if (p.r == 0) {
+            R = true;
+        }
+    }
+
+    return L && R;
+}
+
+
+bool checkCol(const Puzzle &puzzle)
+{
+    bool T = false, B = false;
+
+    for (PuzzlePiece p: puzzle.getPieces()) {
+        if (p.l != 0 || p.r != 0) {
+            return false;
+        }
+
+        if (p.t == 0) {
+            T = true;
+        }
+        if (p.b == 0) {
+            B = true;
+        }
+    }
+
+    return T && B;
+}
+
+
+bool PuzzleSolver::checkRowCol()
+{
+    return checkRow(puzzle) || checkCol(puzzle);
+}
+
+
+void PuzzleSolver::checkCorners()
+{
+    bool TL = false, TR = false, BL = false, BR = false;
+
+    for (PuzzlePiece piece: puzzle.getPieces()) {
+        if (piece.t == 0 && piece.l == 0) {
+            TL = true;
+        } else if (piece.t == 0 && piece.r == 0) {
+            TR = true;
+        } else if (piece.b == 0 && piece.l == 0) {
+            BL = true;
+        } else if (piece.b == 0 && piece.r == 0) {
+            BR = true;
+        }
+    }
+
+    if (!(TL && TR && BL && BR)) {
+        if (!checkRowCol()) {
+            if (!TL) {
+                *(out) << "Cannot solve puzzle: missing corner element: TL" << endl;
+                valid = false;
+            }
+            if (!TR) {
+                *(out) << "Cannot solve puzzle: missing corner element: TR" << endl;
+                valid = false;
+            }
+            if (!BL) {
+                *(out) << "Cannot solve puzzle: missing corner element: BL" << endl;
+                valid = false;
+            }
+            if (!BR) {
+                *(out) << "Cannot solve puzzle: missing corner element: BR" << endl;
+                valid = false;
+            }
+        }
+    }
+}
+
 
 bool PuzzleSolver::solve() {
     return this->solve(PuzzleSolution(), this->puzzle.getPieces(), getEdges(), types);
 }
+
 
 bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, map<string, vector<int>> types) {
     // TODO: Remove comments
@@ -63,14 +237,12 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
 
         vector<int> &usedType = newTypes[type];
 
-        ///
         int id = usedType.at(0);
         usedType.erase(usedType.begin());
 
         if (usedType.empty()) {
             newTypes.erase(type);
         }
-        ///
 
         newEdges.removePiece(id);
         newSol.addElement(static_cast<unsigned int>(id));
@@ -111,9 +283,11 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
     return false;
 }
 
+
 const PuzzleSolution &PuzzleSolver::getSol() const {
     return sol;
 }
+
 
 vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
                                          map<string, vector<int>> types)
@@ -158,6 +332,7 @@ vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePie
     return res;
 }
 
+
 bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece) {
     int row = sol.size() - 1;
     int col = sol.at(row).size();
@@ -191,6 +366,7 @@ bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const 
     return true;
 }
 
+
 Edges PuzzleSolver::getEdges() {
     Edges res;
 
@@ -215,6 +391,7 @@ Edges PuzzleSolver::getEdges() {
     return res;
 }
 
+
 bool PuzzleSolver::sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces) {
     int hor = 0;
     int ver = 0;
@@ -230,6 +407,7 @@ bool PuzzleSolver::sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePi
 
     return (hor == 0 && ver == 0);
 }
+
 
 void Edges::removePiece(int id) {
     left.erase(id);

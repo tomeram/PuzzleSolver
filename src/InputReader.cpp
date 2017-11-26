@@ -183,6 +183,10 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
         istream_iterator<string> beg(buf), end;
         vector<string> tokens(beg, end);
 
+        if (tokens.empty()) {
+            continue;
+        }
+
         if (tokens.size() != 5) {
             *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
             valid = false;

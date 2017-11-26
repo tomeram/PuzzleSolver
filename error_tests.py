@@ -110,28 +110,44 @@ def duplicate_pieces():
 
 
 def missing_corners():
-    # TODO
+    output = run_with_arguments('tests/missing_corners.txt', 'test.out')
+
+    if 'Cannot solve puzzle: wrong number of straight edges\n' \
+       'Cannot solve puzzle: missing corner element: TL\n' \
+       'Cannot solve puzzle: missing corner element: TR\n' \
+       'Cannot solve puzzle: missing corner element: BL\n' \
+       'Cannot solve puzzle: missing corner element: BR' != output.strip():
+        print 'Fail: missing_corners'
+        print output
+        return False
+
     return True
 
 
 def missing_edges():
-    # TODO
+    output = run_with_arguments('tests/missing_edges.txt', 'test.out')
+
+    if 'Cannot solve puzzle: wrong number of straight edges' != output.strip():
+        print 'Fail: missing_edges'
+        print output
+        return False
+
     return True
 
 
 def main():
     success = True
 
-    success = success and check_wrong_args()
-    success = success and check_empty_file()
-    success = success and no_num_elements()
-    success = success and invalid_piece()
-    success = success and invalid_piece_numbers()
-    success = success and extra_pieces()
-    success = success and missing_pieces()
-    success = success and duplicate_pieces()
-    success = success and missing_corners()
-    success = success and missing_edges()
+    success = check_wrong_args() and success
+    success = check_empty_file() and success
+    success = no_num_elements() and success
+    success = invalid_piece() and success
+    success = invalid_piece_numbers() and success
+    success = extra_pieces() and success
+    success = missing_pieces() and success
+    success = duplicate_pieces() and success
+    success = missing_corners() and success
+    success = missing_edges() and success
 
     if success:
         print '\o/ Success!'
