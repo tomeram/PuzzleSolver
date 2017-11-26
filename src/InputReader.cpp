@@ -36,11 +36,62 @@ bool validatePiece(int l, int t, int r, int b)
     return validSide(l) && validSide(t) && validSide(r) && validSide(b);
 }
 
+bool checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+{
+    int prevID = 0;
+    vector<int> missing;
+
+    for (PuzzlePiece piece: pieces) {
+        int id = piece.id;
+
+        if (id > prevID + 1) {
+            for (int i = 1; i <= id - prevID; i++) {
+                missing.push_back(prevID + i);
+            }
+        }
+
+        prevID = id;
+    }
+
+    if (prevID < size) {
+        for (int i = 1; i <= size - prevID; i++) {
+            missing.push_back(prevID + i);
+        }
+    }
+
+    if (!missing.empty()) {
+        cout << "Missing puzzle element(s) with the following IDs: ";
+
+        for (unsigned int i = 0; i < missing.size(); i++) {
+            cout << missing.at(i);
+
+            if (i < missing.size() - 1) {
+                cout << ", ";
+            }
+        }
+
+        cout << endl;
+
+        throw GeneralError;
+    }
+
+    return true;
+}
+
+bool validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+{
+    checkMissingPieces(pieces, size);
+
+
+    return true;
+}
+
 void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
 {
     ifstream fin(path);
 
     if (!fin.good()){
+        fin.close();
         throw PathError;
     }
 
@@ -48,6 +99,7 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
     getline(fin, s_name, '=');
 
     if (s_name.empty()) {
+        fin.close();
         throw InputFormat;
     }
 
@@ -79,6 +131,7 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
             for (auto &s: tokens) {
                 if (!isinteger(s)) {
                     cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                    fin.close();
                     throw GeneralError;
                 }
 
@@ -105,12 +158,14 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
                         break;
                     default:
                         cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                        fin.close();
                         throw GeneralError;
                 }
             }
 
             if (!validatePiece(a, b, c, d)){
                 cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                fin.close();
                 throw GeneralError;
             }
 
@@ -119,6 +174,11 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
             j++;
         }
     }
+
     fin.close();
+
+    sort(pieces.begin(), pieces.end(), PuzzlePiece::compare);
+
+    validatePieces(pieces, size);
 }
 

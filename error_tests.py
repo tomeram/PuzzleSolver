@@ -51,7 +51,7 @@ def invalid_piece():
     output = run_with_arguments('tests/invalid_piece.txt', '123test')
 
     if 'Puzzle ID 1 has wrong data: 1 1 1 -1' != output.strip():
-        print 'Fail: Invalid Piece'
+        print 'Fail: Invalid piece sides'
         print output
         return False
 
@@ -62,7 +62,7 @@ def invalid_piece_numbers():
     output = run_with_arguments('tests/invalid_numbers.txt', '123test')
 
     if 'Puzzle ID 2 has wrong data: 2 1 1 a 1' != output.strip():
-        print 'Fail: Invalid Piece'
+        print 'Fail: Invalid piece data'
         print output
         return False
 
@@ -71,6 +71,14 @@ def invalid_piece_numbers():
 
 def too_many_pieces():
     # TODO
+    # output = run_with_arguments('tests/too_many_pieces.txt', '123test')
+    #
+    # if 'Puzzle ID 2 has wrong data: 2 1 1 a 1' != output.strip():
+    #     print 'Fail: too_many_pieces'
+    #     print output
+    #     return False
+    #
+    # return True
     return True
 
 
@@ -80,6 +88,17 @@ def too_few_pieces():
 
 
 def missing_pieces():
+    output = run_with_arguments('tests/missing_pieces.txt', '123test')
+
+    if 'Missing puzzle element(s) with the following IDs: 2, 3' != output.strip():
+        print 'Fail: Invalid Piece'
+        print output
+        return False
+
+    return True
+
+
+def duplicate_pieces():
     # TODO
     return True
 
@@ -105,6 +124,7 @@ def main():
     success = success and too_many_pieces()
     success = success and too_few_pieces()
     success = success and missing_pieces()
+    success = success and duplicate_pieces()
     success = success and missing_corners()
     success = success and missing_edges()
 
