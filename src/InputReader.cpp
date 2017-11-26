@@ -3,7 +3,7 @@
 //
 
 #include "InputReader.h"
-#include <fstream>
+#include <iterator>
 #include <sstream>
 #include <set>
 
