@@ -4,6 +4,7 @@
 
 #include "InputReader.h"
 #include <iterator>
+#include <algorithm>
 #include <sstream>
 #include <set>
 
