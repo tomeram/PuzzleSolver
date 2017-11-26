@@ -17,9 +17,9 @@ class InputReader {
 private:
     ofstream *outFile;
 
-    void checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int);
+    bool checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int);
 
-    void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int);
+    bool checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int);
 
     void validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int);
 public:

@@ -40,7 +40,7 @@ bool validatePiece(int l, int t, int r, int b)
 InputReader::InputReader(ofstream *output) : outFile(output) {}
 
 
-void InputReader::checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+bool InputReader::checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     int prevID = 0;
     vector<int> missing;
@@ -49,7 +49,7 @@ void InputReader::checkMissingPieces(const vector<PuzzlePiece> &pieces, int size
         int id = piece.id;
 
         if (id > prevID + 1) {
-            for (int i = 1; i <= id - prevID; i++) {
+            for (int i = 1; i < id - prevID; i++) {
                 missing.push_back(prevID + i);
             }
         }
@@ -76,11 +76,13 @@ void InputReader::checkMissingPieces(const vector<PuzzlePiece> &pieces, int size
 
         *(outFile) << endl;
 
-        throw GeneralError;
+        return false;
     }
+
+    return true;
 }
 
-void InputReader::checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
+bool InputReader::checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     vector<int> extra;
     set<int> duplicate;
@@ -112,7 +114,7 @@ void InputReader::checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) thr
 
         *(outFile) << endl;
 
-        throw GeneralError;
+        return false;
     }
 
 
@@ -134,15 +136,19 @@ void InputReader::checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) thr
 
         *(outFile) << endl;
 
-        throw GeneralError;
+        return false;
     }
+
+    return true;
 }
 
 void InputReader::validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
-    checkMissingPieces(pieces, size);
+    bool res = checkMissingPieces(pieces, size);
 
-    checkExtraIDs(pieces, size);
+    if (!checkExtraIDs(pieces, size) || !res) {
+        throw GeneralError;
+    }
 }
 
 void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
