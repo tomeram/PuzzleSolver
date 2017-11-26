@@ -5,12 +5,11 @@
 #include "InputReader.h"
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <set>
 
-#define PathError 1;
-#define InputFormat 2;
-#define GeneralError 3;
+#define PathError 1
+#define InputFormat 2
+#define GeneralError 3
 
 using namespace std;
 
@@ -37,7 +36,10 @@ bool validatePiece(int l, int t, int r, int b)
     return validSide(l) && validSide(t) && validSide(r) && validSide(b);
 }
 
-void checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+InputReader::InputReader(ofstream *output) : outFile(output) {}
+
+
+void InputReader::checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     int prevID = 0;
     vector<int> missing;
@@ -61,23 +63,23 @@ void checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
     }
 
     if (!missing.empty()) {
-        cout << "Missing puzzle element(s) with the following IDs: ";
+        *(outFile) << "Missing puzzle element(s) with the following IDs: ";
 
         for (unsigned int i = 0; i < missing.size(); i++) {
-            cout << missing.at(i);
+            *(outFile) << missing.at(i);
 
             if (i < missing.size() - 1) {
-                cout << ", ";
+                *(outFile) << ", ";
             }
         }
 
-        cout << endl;
+        *(outFile) << endl;
 
         throw GeneralError;
     }
 }
 
-void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
+void InputReader::checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     vector<int> extra;
     set<int> duplicate;
@@ -97,44 +99,45 @@ void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
     }
 
     if (!extra.empty()) {
-        cout << "Puzzle of size " << size << " cannot have the following IDs: ";
+        *(outFile) << "Puzzle of size " << size << " cannot have the following IDs: ";
 
         for (unsigned int i = 0; i < extra.size(); i++) {
-            cout << extra.at(i);
+            *(outFile) << extra.at(i);
 
             if (i < extra.size() - 1) {
-                cout << ", ";
+                *(outFile) << ", ";
             }
         }
 
-        cout << endl;
+        *(outFile) << endl;
 
         throw GeneralError;
     }
 
 
     if (!duplicate.empty()) {
+        string error;
 
         vector<int> dupVector;
         dupVector.insert(dupVector.end(), duplicate.begin(), duplicate.end());
 
-        cout << "Puzzle of size " << size << " has duplicate IDs: ";
+        *(outFile) << "Puzzle of size " << size << " has duplicate IDs: ";
 
         for (unsigned int i = 0; i < dupVector.size(); i++) {
-            cout << dupVector.at(i);
+            *(outFile) << dupVector.at(i);
 
             if (i < dupVector.size() - 1) {
-                cout << ", ";
+                *(outFile) << ", ";
             }
         }
 
-        cout << endl;
+        *(outFile) << endl;
 
         throw GeneralError;
     }
 }
 
-void validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+void InputReader::validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     checkMissingPieces(pieces, size);
 
@@ -180,12 +183,13 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
         vector<string> tokens(beg, end);
 
         if (tokens.size() != 5) {
-            cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+            *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+            fin.close();
             throw GeneralError;
         } else {
             for (auto &s: tokens) {
                 if (!isinteger(s)) {
-                    cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                    *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
                     fin.close();
                     throw GeneralError;
                 }
@@ -212,14 +216,14 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
                         i = 0;
                         break;
                     default:
-                        cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                        *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
                         fin.close();
                         throw GeneralError;
                 }
             }
 
             if (!validatePiece(a, b, c, d)){
-                cout << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
                 fin.close();
                 throw GeneralError;
             }

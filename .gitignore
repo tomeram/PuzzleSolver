@@ -9,3 +9,4 @@ PuzzleSolver
 go
 PuzzleSolver.cbp
 ignored
+*.out

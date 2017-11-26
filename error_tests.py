@@ -3,15 +3,22 @@ import os
 EXE_PATH = './cmake-build-debug/PuzzleSolver'
 
 
-def run_with_arguments(input_file, output_file):
+def run_prog(input_file, output_file):
     return os.popen(EXE_PATH + ' ' + input_file + ' ' + output_file).read()
 
 
+def run_with_arguments(input_file, output_file):
+    run_prog(input_file, output_file)
+
+    with open(output_file) as f:
+        return f.read()
+
+
 def check_wrong_args():
-    output = run_with_arguments('test123', '123test')
+    output = run_prog('test123', 'test.out')
 
     if 'Please supply correct input and output file paths:' not in output:
-        print 'Fail: wrong path'
+        print 'Fail: check_wrong_args'
         print output
         return False
 
@@ -24,10 +31,10 @@ def check_empty_file():
     success = True
 
     with open(file_name, 'w+') as f:
-        output = run_with_arguments(file_name, '123test')
+        output = run_prog(file_name, 'test.out')
 
         if 'Invalid file format' != output.strip():
-            print 'Fail: empty file'
+            print 'Fail: check_empty_file'
             print output
             success = False
 
@@ -37,10 +44,10 @@ def check_empty_file():
 
 
 def no_num_elements():
-    output = run_with_arguments('tests/no_numelements.txt', '123test')
+    output = run_prog('tests/no_numelements.txt', 'test.out')
 
     if 'Invalid file format' != output.strip():
-        print 'Fail: Missing NumElements'
+        print 'Fail: no_num_elements'
         print output
         return False
 
@@ -48,10 +55,10 @@ def no_num_elements():
 
 
 def invalid_piece():
-    output = run_with_arguments('tests/invalid_piece.txt', '123test')
+    output = run_with_arguments('tests/invalid_piece.txt', 'test.out')
 
     if 'Puzzle ID 1 has wrong data: 1 1 1 -1' != output.strip():
-        print 'Fail: Invalid piece sides'
+        print 'Fail: invalid_piece'
         print output
         return False
 
@@ -59,10 +66,10 @@ def invalid_piece():
 
 
 def invalid_piece_numbers():
-    output = run_with_arguments('tests/invalid_numbers.txt', '123test')
+    output = run_with_arguments('tests/invalid_numbers.txt', 'test.out')
 
     if 'Puzzle ID 2 has wrong data: 2 1 1 a 1' != output.strip():
-        print 'Fail: Invalid piece data'
+        print 'Fail: invalid_piece_numbers'
         print output
         return False
 
@@ -70,7 +77,7 @@ def invalid_piece_numbers():
 
 
 def extra_pieces():
-    output = run_with_arguments('tests/extra_pieces.txt', '123test')
+    output = run_with_arguments('tests/extra_pieces.txt', 'test.out')
 
     if 'Puzzle of size 2 cannot have the following IDs: 3, 4' != output.strip():
         print 'Fail: extra_pieces'
@@ -81,10 +88,10 @@ def extra_pieces():
 
 
 def missing_pieces():
-    output = run_with_arguments('tests/missing_pieces.txt', '123test')
+    output = run_with_arguments('tests/missing_pieces.txt', 'test.out')
 
     if 'Missing puzzle element(s) with the following IDs: 2, 3' != output.strip():
-        print 'Fail: Invalid Piece'
+        print 'Fail: missing_pieces'
         print output
         return False
 
@@ -92,7 +99,7 @@ def missing_pieces():
 
 
 def duplicate_pieces():
-    output = run_with_arguments('tests/duplicate_pieces.txt', '123test')
+    output = run_with_arguments('tests/duplicate_pieces.txt', 'test.out')
 
     if 'Puzzle of size 2 has duplicate IDs: 1, 2' != output.strip():
         print 'Fail: duplicate_pieces'

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "PuzzlePiece.h"
 #include "PuzzleValidator.h"
@@ -13,6 +14,7 @@ void printUsage(const string &arg0)
 
 int main(int argc, char** argv)
 {
+    // TODO: Remove time
     clock_t begin = clock();
 
     if (argc != 3) {
@@ -22,8 +24,13 @@ int main(int argc, char** argv)
 
     vector<PuzzlePiece> pieces;
 
+    ofstream outputFile;
+    outputFile.open((argv[2]));
+
+    InputReader reader(&outputFile);
+
     try {
-        InputReader::readInput(argv[1], pieces);
+        reader.readInput(argv[1], pieces);
     } catch (int e) {
         switch (e) {
             case 1:
@@ -43,6 +50,18 @@ int main(int argc, char** argv)
         return 1;
     }
 
+
+
+    if (!reader.errors.empty()) {
+        for (string error: reader.errors) {
+            outputFile << error;
+        }
+
+        outputFile.close();
+
+        return 1;
+    }
+
     Puzzle puzzle(pieces);
 
     PuzzleSolver solver(puzzle);
@@ -58,10 +77,13 @@ int main(int argc, char** argv)
         cout << "wrong" << endl;
     }
 
+    // TODO: Remove time
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
     cout << "Total time: " << elapsed_secs << endl;
+
+    outputFile.close();
 
     return 0;
 }
