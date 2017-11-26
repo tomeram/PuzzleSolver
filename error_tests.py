@@ -92,7 +92,13 @@ def missing_pieces():
 
 
 def duplicate_pieces():
-    # TODO
+    output = run_with_arguments('tests/duplicate_pieces.txt', '123test')
+
+    if 'Puzzle of size 2 has duplicate IDs: 1, 2' != output.strip():
+        print 'Fail: duplicate_pieces'
+        print output
+        return False
+
     return True
 
 

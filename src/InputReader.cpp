@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <set>
 
 #define PathError 1;
 #define InputFormat 2;
@@ -79,11 +80,20 @@ void checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     vector<int> extra;
+    set<int> duplicate;
+
+    int prevID = 0;
 
     for (PuzzlePiece piece: pieces) {
-        if (piece.id > size) {
+        if (piece.id > size || piece.id <= 0) {
             extra.push_back(piece.id);
         }
+
+        if (piece.id == prevID) {
+            duplicate.insert(prevID);
+        }
+
+        prevID = piece.id;
     }
 
     if (!extra.empty()) {
@@ -93,6 +103,27 @@ void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
             cout << extra.at(i);
 
             if (i < extra.size() - 1) {
+                cout << ", ";
+            }
+        }
+
+        cout << endl;
+
+        throw GeneralError;
+    }
+
+
+    if (!duplicate.empty()) {
+
+        vector<int> dupVector;
+        dupVector.insert(dupVector.end(), duplicate.begin(), duplicate.end());
+
+        cout << "Puzzle of size " << size << " has duplicate IDs: ";
+
+        for (unsigned int i = 0; i < dupVector.size(); i++) {
+            cout << dupVector.at(i);
+
+            if (i < dupVector.size() - 1) {
                 cout << ", ";
             }
         }
