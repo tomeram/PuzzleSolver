@@ -69,21 +69,14 @@ def invalid_piece_numbers():
     return True
 
 
-def too_many_pieces():
-    # TODO
-    # output = run_with_arguments('tests/too_many_pieces.txt', '123test')
-    #
-    # if 'Puzzle ID 2 has wrong data: 2 1 1 a 1' != output.strip():
-    #     print 'Fail: too_many_pieces'
-    #     print output
-    #     return False
-    #
-    # return True
-    return True
+def extra_pieces():
+    output = run_with_arguments('tests/extra_pieces.txt', '123test')
 
+    if 'Puzzle of size 2 cannot have the following IDs: 3, 4' != output.strip():
+        print 'Fail: extra_pieces'
+        print output
+        return False
 
-def too_few_pieces():
-    # TODO
     return True
 
 
@@ -121,8 +114,7 @@ def main():
     success = success and no_num_elements()
     success = success and invalid_piece()
     success = success and invalid_piece_numbers()
-    success = success and too_many_pieces()
-    success = success and too_few_pieces()
+    success = success and extra_pieces()
     success = success and missing_pieces()
     success = success and duplicate_pieces()
     success = success and missing_corners()

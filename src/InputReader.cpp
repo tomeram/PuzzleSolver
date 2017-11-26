@@ -36,7 +36,7 @@ bool validatePiece(int l, int t, int r, int b)
     return validSide(l) && validSide(t) && validSide(r) && validSide(b);
 }
 
-bool checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+void checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     int prevID = 0;
     vector<int> missing;
@@ -74,16 +74,40 @@ bool checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 
         throw GeneralError;
     }
-
-    return true;
 }
 
-bool validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
+void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int)
+{
+    vector<int> extra;
+
+    for (PuzzlePiece piece: pieces) {
+        if (piece.id > size) {
+            extra.push_back(piece.id);
+        }
+    }
+
+    if (!extra.empty()) {
+        cout << "Puzzle of size " << size << " cannot have the following IDs: ";
+
+        for (unsigned int i = 0; i < extra.size(); i++) {
+            cout << extra.at(i);
+
+            if (i < extra.size() - 1) {
+                cout << ", ";
+            }
+        }
+
+        cout << endl;
+
+        throw GeneralError;
+    }
+}
+
+void validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int)
 {
     checkMissingPieces(pieces, size);
 
-
-    return true;
+    checkExtraIDs(pieces, size);
 }
 
 void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
