@@ -42,12 +42,14 @@ bool checkUsedPieces(vector<unsigned int> &usedPieces, unsigned int pieceNum)
     sort(usedPieces.begin(), usedPieces.end());
 
     if (usedPieces.size() != pieceNum) {
+        // TODO
         cout << "There are Unused pieces" << endl;
         return false;
     }
 
     for (unsigned int i = 0; i < usedPieces.size(); i++) {
         if (i + 1 != usedPieces.at(i)) {
+            // TODO
             cout << "Duplicate piece used" << endl;
             return false;
         }
