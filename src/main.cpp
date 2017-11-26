@@ -52,11 +52,7 @@ int main(int argc, char** argv)
 
 
 
-    if (!reader.errors.empty()) {
-        for (string error: reader.errors) {
-            outputFile << error;
-        }
-
+    if (!reader.valid) {
         outputFile.close();
 
         return 1;

@@ -18,13 +18,16 @@ private:
     ofstream *outFile;
 
     void checkMissingPieces(const vector<PuzzlePiece> &pieces, int size) throw(int);
+
     void checkExtraIDs(const vector<PuzzlePiece> &pieces, int size) throw(int);
+
     void validatePieces(const vector<PuzzlePiece> &pieces, int size) throw(int);
 public:
-    void readInput(string path, vector<PuzzlePiece> &pieces) throw(int);
-    vector<string> errors;
+    bool valid = true;
 
-    InputReader(ofstream *output);
+    explicit InputReader(ofstream *output);
+
+    void readInput(string path, vector<PuzzlePiece> &pieces) throw(int);
 };
 
 

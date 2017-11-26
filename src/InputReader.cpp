@@ -175,7 +175,7 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
     size = stoi(s_size);
 
     string line;
-    int id, a, b, c, d;
+    int id, a = -2, b = -2, c = -2, d = -2;
     int i = 0,j = 0;
 
     while (getline(fin, line)) {
@@ -185,57 +185,59 @@ void InputReader::readInput(string path, vector<PuzzlePiece> &pieces) throw(int)
 
         if (tokens.size() != 5) {
             *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
-            fin.close();
-            throw GeneralError;
-        } else {
-            for (auto &s: tokens) {
-                if (!isinteger(s)) {
-                    *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
-                    fin.close();
-                    throw GeneralError;
-                }
-
-                switch (i) {
-                    case 0  :
-                        id = stoi(s);
-                        i++;
-                        break;
-                    case 1  :
-                        a = stoi(s);
-                        i++;
-                        break;
-                    case 2  :
-                        b = stoi(s);
-                        i++;
-                        break;
-                    case 3  :
-                        c = stoi(s);
-                        i++;
-                        break;
-                    case 4  :
-                        d = stoi(s);
-                        i = 0;
-                        break;
-                    default:
-                        *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
-                        fin.close();
-                        throw GeneralError;
-                }
-            }
-
-            if (!validatePiece(a, b, c, d)){
-                *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
-                fin.close();
-                throw GeneralError;
-            }
-
-            PuzzlePiece p(id, a, b, c, d);
-            pieces.push_back(p);
-            j++;
+            valid = false;
+            continue;
         }
+
+        for (auto &s: tokens) {
+            if (!isinteger(s)) {
+                valid = false;
+                break;
+            }
+
+            switch (i) {
+                case 0  :
+                    id = stoi(s);
+                    i++;
+                    break;
+                case 1  :
+                    a = stoi(s);
+                    i++;
+                    break;
+                case 2  :
+                    b = stoi(s);
+                    i++;
+                    break;
+                case 3  :
+                    c = stoi(s);
+                    i++;
+                    break;
+                case 4  :
+                    d = stoi(s);
+                    i = 0;
+                    break;
+                default:
+                    *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+                    valid = false;
+                    break;
+            }
+        }
+
+        if (!validatePiece(a, b, c, d)){
+            *(outFile) << "Puzzle ID " << tokens.at(0) << " has wrong data: " << line << endl;
+            valid = false;
+        }
+
+        PuzzlePiece p(id, a, b, c, d);
+        pieces.push_back(p);
+        j++;
     }
 
     fin.close();
+
+    if (!valid) {
+        throw GeneralError;
+    }
 
     sort(pieces.begin(), pieces.end(), PuzzlePiece::compare);
 

@@ -68,7 +68,7 @@ def invalid_piece():
 def invalid_piece_numbers():
     output = run_with_arguments('tests/invalid_numbers.txt', 'test.out')
 
-    if 'Puzzle ID 2 has wrong data: 2 1 1 a 1' != output.strip():
+    if 'Puzzle ID 1 has wrong data: 1 0 0 0 a\nPuzzle ID 2 has wrong data: 2 1 1 a 1' != output.strip():
         print 'Fail: invalid_piece_numbers'
         print output
         return False
