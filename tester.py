@@ -32,24 +32,74 @@ def generate_puzzle(x, y):
     return res
 
 
+def validateSolution(inFile, outFile):
+    input = ''
+    output = ''
+
+    with open(inFile) as f:
+        input = f.read()
+
+    with open(outFile) as f:
+        output = f.read()
+
+    pieces = {}
+
+    for line in input.split('\n')[1:]:
+        line = line.split()
+
+        if len(line) > 0:
+            pieces[line[0]] = line[1:]
+
+    seen = set()
+    matrix = []
+    lines = output.split('\n')
+
+    for i in range(len(lines)):
+        matrix.append([])
+        cols = lines[i].split()
+        for j in range(len(cols)):
+            id = cols[j]
+            matrix[i].append(id)
+
+            if id in seen:
+                print 'Error: Duplicate piece - ' + str(id)
+                exit(1)
+
+            seen.add(id)
+
+            if i == 0 and pieces[matrix[i][j]][1] != '0':
+                print 'Error: ' + str(i) + ', ' + str(j)
+                exit(1)
+            elif i > 0:
+                if int(pieces[matrix[i][j]][1]) + int(pieces[matrix[i-1][j]][3]) != 0:
+                    print 'Error: ' + str(i) + ', ' + str(j)
+                    exit(1)
+
+            if j > 0:
+                if int(pieces[matrix[i][j]][0]) + int(pieces[matrix[i][j-1]][2]) != 0:
+                    print 'Error: ' + str(i) + ', ' + str(j)
+                    exit(1)
+    print 'Success!!!'
+
+
 def main():
-    x = 7
-    y = 7
+    for i in range(10):
+        x = 6
+        y = 6
 
-    with open('./ignored/tester.txt', 'w+') as f:
-        f.write('NumElements=' + str(x * y) + '\n')
+        with open('./ignored/tester.txt', 'w+') as f:
+            f.write('NumElements=' + str(x * y) + '\n')
 
-        i = 0
+            i = 0
 
-        for line in generate_puzzle(x, y):
-            for elem in line:
-                i += 1
-                f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
+            for line in generate_puzzle(x, y):
+                for elem in line:
+                    i += 1
+                    f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
-    # res = os.popen('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt test.out').read()
-    # print res
+        print os.popen('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt ./ignored/test.out').read()
 
-    os.system('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt test.out')
+        validateSolution('./ignored/tester.txt', './ignored/test.out')
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@
 
 
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ public:
 
     vector<unsigned int> &row(int num) const;
 
-    void print() const;
+    void print(ofstream *out) const;
 };
 
 

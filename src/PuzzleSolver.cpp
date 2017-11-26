@@ -35,45 +35,35 @@ PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output) : puzzle(puzz
 }
 
 
-bool checkEdgeByLength(vector<PuzzlePiece> pieces, int row, int col, int l, int t, int r, int b)
-{
-    if (pieces.empty()) {
-        return  (t >= row && b >= col && l >= col && r>= col);
-    }
-
-    auto p = pieces.back();
-
-    pieces.pop_back();
-
-    if (p.l == 0 && checkEdgeByLength(pieces, row, col, l + 1, t, r, b)) {
-        return true;
-    }
-
-    if (p.t == 0 && checkEdgeByLength(pieces, row, col, l, t + 1, r, b)) {
-        return true;
-    }
-
-    if (p.r == 0 && checkEdgeByLength(pieces, row, col, l, t, r + 1, b)) {
-        return true;
-    }
-
-    if (p.b == 0 && checkEdgeByLength(pieces, row, col, l, t, r, b + 1)) {
-        return true;
-    }
-
-    return false;
-}
-
-
 bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
 {
+    int l = 0, t = 0, r = 0, b = 0;
+    for (auto p: pieces) {
+        if (p.l == 0) {
+            l++;
+        }
+
+        if (p.t == 0) {
+            t++;
+        }
+
+        if (p.r == 0) {
+            r++;
+        }
+
+        if (p.b == 0) {
+            b++;
+        }
+
+    }
+
     auto newRows = rowLengths;
 
-    for (auto row: rowLengths) {
-        int col = pieces.size() / row;
+    for (int cols: rowLengths) {
+        int rows = pieces.size() / cols;
 
-        if (!checkEdgeByLength(pieces, row, col, 0, 0, 0, 0)) {
-            newRows.erase(row);
+        if (l < cols || r < cols || t < rows || b < rows) {
+            newRows.erase(cols);
         }
     }
 
@@ -103,6 +93,7 @@ void PuzzleSolver::checkInput()
 
     if (!checkEdges(pieces, rowLengths)) {
         *(out) << "Cannot solve puzzle: wrong number of straight edges" << endl;
+        valid = false;
     }
 
     if (pieces.size() > 1) {
@@ -210,13 +201,6 @@ bool PuzzleSolver::solve() {
 
 
 bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, map<string, vector<int>> types) {
-    // TODO: Remove comments
-//    static int calls = 0;
-//
-//    calls++;
-//
-//    cout << "Call: " << calls << endl;
-
     if (unused.empty()) {
         if (PuzzleValidator::validate(puzzle, sol)) {
             this->sol = sol;
@@ -290,7 +274,7 @@ const PuzzleSolution &PuzzleSolver::getSol() const {
 
 
 vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
-                                         map<string, vector<int>> types)
+                                            map<string, vector<int>> types)
 {
     vector<string> res;
     auto matrix = sol.getSolution();

@@ -12,25 +12,21 @@ bool checkPuzzleEdges(const PuzzlePiece &piece, int row, int col, int cols, int 
 {
     // Check first row
     if (row == 0 && piece.t != 0) {
-        cout << "Top" << endl;
         return false;
     }
 
     // Check last row
     if (row == rows - 1 && piece.b != 0) {
-        cout << "Bottom" << endl;
         return false;
     }
 
     // First piece in row
     if (col == 0 && piece.l != 0) {
-        cout << "Left" << endl;
         return false;
     }
 
     // Last piece in row
     if (col == cols - 1 && piece.r != 0) {
-        cout << "Right" << endl;
         return false;
     }
 
@@ -42,15 +38,11 @@ bool checkUsedPieces(vector<unsigned int> &usedPieces, unsigned int pieceNum)
     sort(usedPieces.begin(), usedPieces.end());
 
     if (usedPieces.size() != pieceNum) {
-        // TODO
-        cout << "There are Unused pieces" << endl;
         return false;
     }
 
     for (unsigned int i = 0; i < usedPieces.size(); i++) {
         if (i + 1 != usedPieces.at(i)) {
-            // TODO
-            cout << "Duplicate piece used" << endl;
             return false;
         }
     }
@@ -92,7 +84,6 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
                 auto &top = puzzle.getPieceById(sol.row(i - 1).at(j));
 
                 if (top.b + piece.t != 0) {
-                    cout << "top" << endl;
                     return false;
                 }
             }
@@ -102,7 +93,6 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
                 auto &bot = puzzle.getPieceById(sol.row(i + 1).at(j));
 
                 if (bot.t + piece.b != 0) {
-                    cout << "bot" << endl;
                     return false;
                 }
             }
@@ -112,7 +102,6 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
                 auto &left = puzzle.getPieceById(sol.row(i).at(j - 1));
 
                 if (left.r + piece.l != 0) {
-                    cout << "left" << endl;
                     return false;
                 }
             }
@@ -122,7 +111,6 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
                 auto &right = puzzle.getPieceById(sol.row(i).at(j + 1));
 
                 if (right.l + piece.r != 0) {
-                    cout << "right" << endl;
                     return false;
                 }
             }

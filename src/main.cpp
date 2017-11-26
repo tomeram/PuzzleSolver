@@ -14,9 +14,6 @@ void printUsage(const string &arg0)
 
 int main(int argc, char** argv)
 {
-    // TODO: Remove time
-    clock_t begin = clock();
-
     if (argc != 3) {
         printUsage(argv[0]);
         return 1;
@@ -50,8 +47,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-
-
     if (!reader.valid) {
         outputFile.close();
 
@@ -67,22 +62,11 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    bool t = solver.solve();
-
-    cout << "The result is ";
-
-    if (t) {
-        cout << "correct" << endl;
-        solver.getSol().print();
+    if (solver.solve()) {
+        solver.getSol().print(&outputFile);
     } else {
-        cout << "wrong" << endl;
+        outputFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
     }
-
-    // TODO: Remove time
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-    cout << "Total time: " << elapsed_secs << endl;
 
     outputFile.close();
 

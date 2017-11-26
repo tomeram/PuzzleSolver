@@ -135,6 +135,17 @@ def missing_edges():
     return True
 
 
+def no_sol():
+    output = run_with_arguments('tests/no_sol.txt', 'test.out')
+
+    if 'Cannot solve puzzle: it seems that there is no proper solution' != output.strip():
+        print 'Fail: no_sol'
+        print output
+        return False
+
+    return True
+
+
 def main():
     success = True
 
@@ -148,6 +159,7 @@ def main():
     success = duplicate_pieces() and success
     success = missing_corners() and success
     success = missing_edges() and success
+    success = no_sol() and success
 
     if success:
         print '\o/ Success!'
