@@ -158,35 +158,38 @@ bool PuzzleSolver::checkRowCol()
 
 void PuzzleSolver::checkCorners()
 {
-    bool TL = false, TR = false, BL = false, BR = false;
+    int TL = 0, TR = 0, BL = 0, BR = 0;
 
     for (PuzzlePiece piece: puzzle.getPieces()) {
         if (piece.t == 0 && piece.l == 0) {
-            TL = true;
-        } else if (piece.t == 0 && piece.r == 0) {
-            TR = true;
-        } else if (piece.b == 0 && piece.l == 0) {
-            BL = true;
-        } else if (piece.b == 0 && piece.r == 0) {
-            BR = true;
+            TL++;
+        }
+        if (piece.t == 0 && piece.r == 0) {
+            TR++;
+        }
+        if (piece.b == 0 && piece.l == 0) {
+            BL++;
+        }
+        if (piece.b == 0 && piece.r == 0) {
+            BR++;
         }
     }
 
     if (!(TL && TR && BL && BR)) {
         if (!checkRowCol()) {
-            if (!TL) {
+            if (TL == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: TL" << endl;
                 valid = false;
             }
-            if (!TR) {
+            if (TR == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: TR" << endl;
                 valid = false;
             }
-            if (!BL) {
+            if (BL == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: BL" << endl;
                 valid = false;
             }
-            if (!BR) {
+            if (BR == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: BR" << endl;
                 valid = false;
             }
