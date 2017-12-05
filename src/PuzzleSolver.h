@@ -25,12 +25,18 @@ public:
 
 class PuzzleSolver {
 private:
-    bool valid = true;
-    Puzzle puzzle;
     ofstream *out;
+
+    bool valid = true;
+    bool rotations = false;
+
+    Puzzle puzzle;
     PuzzleSolution sol;
+
     set<int> rowLengths;
     map<string, vector<int>> types;
+
+    bool sumPieces(const vector<PuzzlePiece> &pieces);
 
     bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, map<string, vector<int>> types);
 
@@ -48,7 +54,7 @@ private:
     bool sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces);
 
 public:
-    PuzzleSolver(const Puzzle &puzzle, ofstream *output);
+    PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool allowRotations = false);
 
     bool isValid() {
         return valid;

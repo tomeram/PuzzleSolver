@@ -11,7 +11,10 @@ string buildTypeId(int l, int t, int r, int b)
 }
 
 
-PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output) : puzzle(puzzle), out(output)
+PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool allowRotations) :
+        out(output),
+        rotations(allowRotations),
+        puzzle(puzzle)
 {
     int size = static_cast<int>(puzzle.getPieces().size());
 
@@ -73,7 +76,7 @@ bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
 }
 
 
-bool sumPieces(const vector<PuzzlePiece> &pieces)
+bool PuzzleSolver::sumPieces(const vector<PuzzlePiece> &pieces)
 {
     int v = 0;
     int h = 0;
@@ -83,7 +86,11 @@ bool sumPieces(const vector<PuzzlePiece> &pieces)
         h += p.l + p.r;
     }
 
-    return (v == 0) && (h == 0);
+    if (rotations) {
+        return v + h == 0;
+    } else {
+        return (v == 0) && (h == 0);
+    }
 }
 
 
