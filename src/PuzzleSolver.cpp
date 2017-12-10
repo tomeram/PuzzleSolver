@@ -59,17 +59,17 @@ bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
 
     auto newRows = rowLengths;
 
-    for (int cols: rowLengths) {
-        int rows = pieces.size() / cols;
+    for (int rows: rowLengths) {
+        int cols = pieces.size() / rows;
 
         if (l < cols || r < cols || t < rows || b < rows) {
-            newRows.erase(cols);
+            newRows.erase(rows);
         }
     }
 
     rowLengths = newRows;
 
-    return !rowLengths.empty();
+    return !newRows.empty();
 }
 
 
