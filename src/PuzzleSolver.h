@@ -25,6 +25,7 @@ public:
 
 class PuzzleSolver {
 private:
+    bool rotate = false;
     bool valid = true;
     Puzzle puzzle;
     ofstream *out;
@@ -48,7 +49,7 @@ private:
     bool sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces);
 
 public:
-    PuzzleSolver(const Puzzle &puzzle, ofstream *output);
+    PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool rotation);
 
     bool isValid() {
         return valid;

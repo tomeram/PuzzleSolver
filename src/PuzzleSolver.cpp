@@ -11,7 +11,8 @@ string buildTypeId(int l, int t, int r, int b)
 }
 
 
-PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output) : puzzle(puzzle), out(output)
+PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool rotation) :
+        rotate(rotation), puzzle(puzzle), out(output)
 {
     int size = static_cast<int>(puzzle.getPieces().size());
 

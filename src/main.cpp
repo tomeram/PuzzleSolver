@@ -9,14 +9,27 @@
 void printUsage(const string &arg0)
 {
     cout << "Please supply correct input and output file paths:" << endl
-         << arg0 << " <input_file> <output_file>" << endl;
+         << arg0 << " <input_file> <output_file> [-rotate]" << endl;
 }
 
 int main(int argc, char** argv)
 {
-    if (argc != 3) {
+    bool rotation = false;
+
+    if (argc < 3 || argc > 4) {
         printUsage(argv[0]);
         return 1;
+    }
+
+    if (argc == 4) {
+        string rotateFlag = argv[4];
+
+        if (rotateFlag == "-rotate") {
+            rotation = true;
+        } else {
+            printUsage(argv[0]);
+            return 1;
+        }
     }
 
     vector<PuzzlePiece> pieces;
@@ -55,7 +68,7 @@ int main(int argc, char** argv)
 
     Puzzle puzzle(pieces);
 
-    PuzzleSolver solver(puzzle, &outputFile);
+    PuzzleSolver solver(puzzle, &outputFile, rotation);
 
     if (!solver.isValid()) {
         outputFile.close();
