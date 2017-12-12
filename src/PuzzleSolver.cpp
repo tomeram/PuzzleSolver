@@ -23,6 +23,7 @@ PuzzleSolver::PuzzleSolver(Puzzle &puzzle, ofstream *output, bool rotation) :
 bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
 {
     int l = 0, t = 0, r = 0, b = 0;
+
     for (auto p: pieces) {
         if (p.left() == 0) {
             l++;

@@ -44,3 +44,13 @@ bool TypesMap::find(string type) {
     return _types.find(type) != _types.end();
 
 }
+
+vector<string> TypesMap::getTypes(TypesMap::Constraints c) const {
+    // TODO
+    return vector<string>();
+}
+
+PuzzlePiece *TypesMap::getPiece(string type) {
+    // TODO
+    return nullptr;
+}
