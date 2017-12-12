@@ -57,3 +57,7 @@ string PuzzlePiece::getRotation() const {
     return "270";
 }
 
+string PuzzlePiece::getType() const {
+    return to_string(left()) + " " + to_string(top()) + " " + to_string(right()) + " " + to_string(bottom());
+}
+

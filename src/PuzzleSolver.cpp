@@ -5,12 +5,6 @@
 #include "PuzzleSolver.h"
 #include "PuzzleValidator.h"
 
-string buildTypeId(int l, int t, int r, int b)
-{
-    return to_string(l) + " " + to_string(t) + " " + to_string(r) + " " + to_string(b);
-}
-
-
 PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool rotation) :
         rotate(rotation), puzzle(puzzle), out(output)
 {
@@ -23,13 +17,29 @@ PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool rotation
     }
 
     for (PuzzlePiece p: puzzle.getPieces()) {
-        string type = buildTypeId(p.left(), p.top(), p.right(), p.bottom());
+        bool found = false;
+        int rotations = 1;
 
-        if (types.find(type) == types.end()) {
-            types[type] = vector<int>();
+        if (rotate || true) {
+            rotations = 4;
         }
 
-        types[type].push_back(p.id);
+        for (int i = 0; i < rotations; i++) {
+            p.rotate(i);
+
+            auto type = p.getType();
+
+            if (types.find(type) != types.end()) {
+                types[type].push_back(p.id);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            p.rotate(0);
+            types[p.getType()] = {p.id};
+        }
     }
 
     checkInput();
@@ -306,7 +316,9 @@ vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePie
                 for (int r: sides) {
                     for (int b: sides) {
 
-                        string typeID = buildTypeId(l, t, r, b);
+                        auto typePiece = PuzzlePiece(-1, l, t, r, b);
+
+                        string typeID = typePiece.getType();
 
                         if (types.find(typeID) != types.end()) {
                             res.push_back(typeID);
