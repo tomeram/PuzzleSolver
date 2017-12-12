@@ -1,7 +1,9 @@
 import os
+import sys
 import random
 
-SIZE = 10
+MAC_PATH = './cmake-build-debug/PuzzleSolver'
+EXE_PATH = 'cmake-build-debug\PuzzleSolver.exe'
 
 
 def random_side():
@@ -82,10 +84,15 @@ def validateSolution(inFile, outFile):
     print 'Success!!!'
 
 
-def main():
+def main(args):
+    global EXE_PATH
+
+    if len(args) > 1 and args[1] == 'mac':
+        EXE_PATH = MAC_PATH
+
     for i in range(10):
-        x = 6
-        y = 6
+        x = 2
+        y = 2
 
         with open('./ignored/tester.txt', 'w+') as f:
             f.write('NumElements=' + str(x * y) + '\n')
@@ -97,10 +104,10 @@ def main():
                     i += 1
                     f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
-        print os.popen('./cmake-build-debug/PuzzleSolver ./ignored/tester.txt ./ignored/test.out').read()
+        print os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read()
 
         validateSolution('./ignored/tester.txt', './ignored/test.out')
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
