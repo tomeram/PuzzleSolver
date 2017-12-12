@@ -1,6 +1,8 @@
 import os
+import sys
 
-EXE_PATH = './cmake-build-debug/PuzzleSolver'
+MAC_PATH = './cmake-build-debug/PuzzleSolver'
+EXE_PATH = 'cmake-build-debug\PuzzleSolver.exe'
 
 
 def run_prog(input_file, output_file):
@@ -146,7 +148,12 @@ def no_sol():
     return True
 
 
-def main():
+def main(args):
+    global EXE_PATH
+
+    if len(args) > 1 and args[1] == 'mac':
+        EXE_PATH = MAC_PATH
+
     success = True
 
     success = check_wrong_args() and success
@@ -169,4 +176,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
