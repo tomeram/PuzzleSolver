@@ -20,7 +20,7 @@ PuzzleSolver::PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool rotation
         bool found = false;
         int rotations = 1;
 
-        if (rotate || true) {
+        if (rotate) {
             rotations = 4;
         }
 
