@@ -13,6 +13,7 @@
 
 #include "Puzzle.h"
 #include "PuzzleSolution.h"
+#include "TypesMap.h"
 
 using namespace std;
 
@@ -27,18 +28,19 @@ class PuzzleSolver {
 private:
     bool rotate = false;
     bool valid = true;
-    Puzzle puzzle;
+    Puzzle _puzzle;
     ofstream *out;
     PuzzleSolution sol;
     set<int> rowLengths;
-    map<string, vector<int>> types;
+    TypesMap types;
 
-    bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, map<string, vector<int>> types);
+
+    bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, TypesMap types);
 
     bool checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece);
 
     vector<string> addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
-                               map<string, vector<int>> types);
+                                  TypesMap types);
 
     bool checkRowCol();
 
@@ -49,7 +51,7 @@ private:
     bool sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces);
 
 public:
-    PuzzleSolver(const Puzzle &puzzle, ofstream *output, bool rotation);
+    PuzzleSolver(Puzzle &puzzle, ofstream *output, bool rotation);
 
     bool isValid() {
         return valid;
