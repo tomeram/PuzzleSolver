@@ -64,24 +64,24 @@ def validateSolution(inFile, outFile):
             matrix[i].append(id)
 
             if id in seen:
-                print 'Error: Duplicate piece - ' + str(id)
+                print('Error: Duplicate piece - ' + str(id))
                 exit(1)
 
             seen.add(id)
 
             if i == 0 and pieces[matrix[i][j]][1] != '0':
-                print 'Error: ' + str(i) + ', ' + str(j)
+                print('Error: ' + str(i) + ', ' + str(j))
                 exit(1)
             elif i > 0:
                 if int(pieces[matrix[i][j]][1]) + int(pieces[matrix[i-1][j]][3]) != 0:
-                    print 'Error: ' + str(i) + ', ' + str(j)
+                    print('Error: ' + str(i) + ', ' + str(j))
                     exit(1)
 
             if j > 0:
                 if int(pieces[matrix[i][j]][0]) + int(pieces[matrix[i][j-1]][2]) != 0:
-                    print 'Error: ' + str(i) + ', ' + str(j)
+                    print('Error: ' + str(i) + ', ' + str(j))
                     exit(1)
-    print 'Success!!!'
+    print('Success!!!')
 
 
 def main(args):
@@ -104,7 +104,7 @@ def main(args):
                     i += 1
                     f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
-        print os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read()
+        print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read())
 
         validateSolution('./ignored/tester.txt', './ignored/test.out')
 
