@@ -67,9 +67,9 @@ bool fillRow( int rowSize, int colSize, int row , int col_left , int col_rigth, 
             c.right(0);
         }
 
-        vector<string> list =  typesMap.getTypes(c);
+        auto list =  typesMap.getTypes(c);
 
-        for (string type : list ){
+        for (auto type : list ){
             TypesMap newMap = typesMap;
             PuzzlePiece* piece = newMap.getPiece(type);
             if ( piece != nullptr ){
@@ -147,9 +147,9 @@ bool fillCol( int rowSize, int colSize, int col , int row_top , int row_bott, ve
             c.right(0);
         }
 
-        vector<string> list = typesMap.getTypes(c);
+        auto list = typesMap.getTypes(c);
         if (! list.empty() ){
-            for (string type : list ){
+            for (auto type : list ){
                 TypesMap newMap = typesMap;
                 PuzzlePiece* piece = newMap.getPiece(type);
                 if ( piece != nullptr ){
