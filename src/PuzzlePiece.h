@@ -16,6 +16,7 @@ public:
     int sides[4];
 
     PuzzlePiece(int id, int l, int t, int r, int b);
+    virtual ~PuzzlePiece();
 
     void rotate(int rotation);
 
@@ -28,6 +29,14 @@ public:
     int right() const;
 
     int bottom() const;
+
+    void left(int s);
+
+    void top(int s);
+
+    void right(int s);
+
+    void bottom(int s);
 
     string getType() const;
 

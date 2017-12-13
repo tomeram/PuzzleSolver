@@ -8,13 +8,15 @@
 
 using namespace std;
 
-PuzzlePiece::PuzzlePiece(int id, int l, int t, int r, int b) : id(id)
+PuzzlePiece::PuzzlePiece(int id, int l = -2, int t = -2, int r = -2, int b = -2) : id(id)
 {
     sides[0] = l;
     sides[1] = t;
     sides[2] = r;
     sides[3] = b;
 }
+
+PuzzlePiece::~PuzzlePiece() {}
 
 void PuzzlePiece::rotate(int rotation)
 {
@@ -61,3 +63,22 @@ string PuzzlePiece::getType() const {
     return to_string(left()) + " " + to_string(top()) + " " + to_string(right()) + " " + to_string(bottom());
 }
 
+void PuzzlePiece::left(int s)
+{
+    sides[0] = s;
+}
+
+void PuzzlePiece::top(int s)
+{
+    sides[1] = s;
+}
+
+void PuzzlePiece::right(int s)
+{
+    sides[2] = s;
+}
+
+void PuzzlePiece::bottom(int s)
+{
+    sides[3] = s;
+}
