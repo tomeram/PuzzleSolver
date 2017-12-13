@@ -210,6 +210,10 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
 
         vector<int> &usedType = newTypes[type];
 
+        if (usedType.empty()) {
+            continue;
+        }
+
         int id = usedType.at(0);
         usedType.erase(usedType.begin());
 

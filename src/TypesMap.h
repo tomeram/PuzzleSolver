@@ -13,16 +13,26 @@
 using namespace std;
 
 class TypesMap {
+public:
+    class Constraints : PuzzlePiece {
+    private:
+        friend class TypesMap;
+    public:
+        Constraints();
+        Constraints(int l, int t, int r, int b);
+    };
+
 private:
     map<string, vector<int>> _types;
     Puzzle *_puzzle;
     bool _rotate;
 
-public:
-    struct Constraints {
-        int l = -2, t = -2, r = -2, b = -2;
-    };
+    set<string> checkBottom(Constraints &c, Constraints &p) const;
+    set<string> checkRight(Constraints &c, Constraints &p) const;
+    set<string> checkTop(Constraints &c, Constraints &p) const;
+    set<string> checkLeft(Constraints &c, Constraints &p) const;
 
+public:
     explicit TypesMap(Puzzle *puzzle, bool rotate = false);
 
     vector<int> &operator[](string type);
