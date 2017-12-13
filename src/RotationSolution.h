@@ -12,9 +12,12 @@ using std::vector;
 
 class RotationSolution {
 private:
-	vector<vector<PuzzlePiece*>> matrix;
+	int _height, _width;
+	vector<vector<PuzzlePiece*>> _matrix;
 
 public:
+	RotationSolution(int height, int width);
+
 	vector<PuzzlePiece*> operator[](int row);
 };
 

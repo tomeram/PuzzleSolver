@@ -28,7 +28,6 @@ private:
 	bool fillFrames(int rowSize, int colSize, int row_top, int row_bott,
 					int col_left, int col_right, RotationSolution sol, TypesMap &typesMap);
 public:
-	RotationSolver();
 
 
 };

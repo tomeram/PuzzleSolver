@@ -12,8 +12,6 @@
 //    sol[i].resize(n);
 //}
 
-RotationSolver::RotationSolver() = default;
-
 int RotationSolver::getPair(int p) {
 	return -p;
 }

@@ -10,3 +10,4 @@ go
 PuzzleSolver.cbp
 ignored
 *.out
+/venv/
