@@ -25,46 +25,46 @@ bool fillRow( int rowSize, int colSize, int row , int col_left , int col_rigth, 
         if ( col_left-1 > 0){
             PuzzlePiece* myLeft = matrix[col_left-1][row];
             if ( myLeft == nullptr){
-                c.l=-2;
+                c.left(-2);
             }else{
-                c.l = getPair( myLeft->left() );
+                c.left(getPair( myLeft->left() ));
             }
 
         } else{
-            c.l = 0;
+            c.left(0);
         }
 
         if ( row-1 > 0){
             PuzzlePiece* myTop = matrix[col_left][row-1];
             if ( myTop== nullptr){
-                c.t=-2;
+                c.top(-2);
             }else{
-                c.t = getPair( myTop->top() );
+                c.top(getPair( myTop->top() ));
             }
         } else{
-            c.t =0;
+            c.top(0);
         }
 
         if ( row+1 < rowSize){
             PuzzlePiece* myBottom = matrix[col_left][row+1];
             if ( myBottom== nullptr){
-                c.b=-2;
+                c.bottom(-2);
             }else{
-                c.b = getPair( myBottom->bottom() );
+                c.bottom( getPair( myBottom->bottom() ));
             }
         } else{
-            c.b =0;
+            c.bottom(0);
         }
 
         if ( col_left+1 < colSize){
             PuzzlePiece* myRigth = matrix[col_left+1][row];
             if ( myRigth== nullptr){
-                c.r=-2;
+                c.right(-2);
             }else{
-                c.r = getPair( myRigth->right() );
+                c.right(getPair( myRigth->right() ));
             }
         } else{
-            c.r =0;
+            c.right(0);
         }
 
         vector<string> list =  typesMap.getTypes(c);
@@ -105,46 +105,46 @@ bool fillCol( int rowSize, int colSize, int col , int row_top , int row_bott, ve
         if ( col-1 > 0){
             PuzzlePiece* myLeft = matrix[col-1][row_top];
             if ( myLeft== nullptr){
-                c.l=-2;
+                c.left(-2);
             }else{
-                c.l = getPair( myLeft->left() );
+                c.left(getPair( myLeft->left() ));
             }
 
         } else{
-            c.l = 0;
+            c.left(0);
         }
 
         if ( col+1 < colSize){
             PuzzlePiece* myTop = matrix[col+1][row_top];
             if ( myTop== nullptr){
-                c.t=-2;
+                c.top(-2);
             }else{
-                c.t = getPair( myTop->top() );
+                c.top(getPair( myTop->top() ));
             }
         } else{
-            c.t =0;
+            c.top(0);
         }
 
         if ( row_top+1 < rowSize){
             PuzzlePiece* myBottom = matrix[col][row_top+1];
             if ( myBottom== nullptr){
-                c.b=-2;
+                c.bottom(-2);
             }else{
-                c.b = getPair( myBottom->bottom() );
+                c.bottom( getPair( myBottom->bottom() ));
             }
         } else{
-            c.b =0;
+            c.bottom(0);
         }
 
         if ( row_top-1 > 0){
             PuzzlePiece* myRigth = matrix[col][row_top-1];
             if ( myRigth== nullptr){
-                c.r=-2;
+                c.right(-2);
             }else{
-                c.r = getPair( myRigth->right() );
+                c.right(getPair( myRigth->right() ));
             }
         } else{
-            c.r =0;
+            c.right(0);
         }
 
         vector<string> list = typesMap.getTypes(c);

@@ -5,6 +5,7 @@
 #ifndef PUZZLESOLVER_TYPESMAP_H
 #define PUZZLESOLVER_TYPESMAP_H
 
+#include <set>
 #include <map>
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@ using namespace std;
 
 class TypesMap {
 public:
-    class Constraints : PuzzlePiece {
+    class Constraints : public PuzzlePiece {
     private:
         friend class TypesMap;
     public:
