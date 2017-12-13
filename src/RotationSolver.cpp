@@ -1,245 +1,138 @@
 //
-// Created by Kobi Hazan on 12/12/2017.
+// Created by tomer on 13-Dec-17.
 //
 
 #include "RotationSolver.h"
 
-int RotationSolver::getPair(int p) {
-	return -p;
-}
-
-bool RotationSolver::fillRow(int rowSize, int colSize, int row, int col, TypesMap &typesMap) {
-	if (col > col + rowSize) {
-		return true;
-	}
-
+TypesMap::Constraints RotationSolver::getConstraints(int row, int col) const
+{
 	TypesMap::Constraints c;
 
-	if (col-1 > 0) {
-		PuzzlePiece* myLeft = _sol[col-1][row];
-		if (myLeft == nullptr) {
-			c.left(-2);
-		} else {
-			c.left(getPair(myLeft->left()));
-		}
-
-	} else {
+	// LEFT
+	if (col == 0) {
 		c.left(0);
+	} else {
+		c.left(-_sol[row][col - 1]->right());
 	}
 
-	if (row-1 > 0) {
-		PuzzlePiece* myTop = _sol[col][row-1];
-		if (myTop == nullptr) {
-			c.top(-2);
-		} else {
-			c.top(getPair(myTop->top()));
-		}
-	} else {
+	// TOP
+	if (row == 0) {
 		c.top(0);
+	} else {
+		c.top(-_sol[row - 1][col]->bottom());
 	}
 
-	if (row+1 < rowSize) {
-		PuzzlePiece* myBottom = _sol[col][row+1];
-		if (myBottom == nullptr) {
-			c.bottom(-2);
-		} else {
-			c.bottom(getPair(myBottom->bottom()));
-		}
-	} else {
-		c.bottom(0);
-	}
-
-	if (col+1 < colSize) {
-		PuzzlePiece* myright = _sol[col+1][row];
-		if (myright == nullptr) {
-			c.right(-2);
-		} else {
-			c.right(getPair(myright->right()));
-		}
-	} else {
+	// RIGHT
+	if (col == _sol.get_width() - 1) {
 		c.right(0);
+	} else {
+		c.right(-_sol[row][col + 1]->left());
 	}
 
-	auto goodTypes =  typesMap.getTypes(c);
+	// BOTTOM
+	if (row == _sol.get_height() - 1) {
+		c.bottom(0);
+	} else {
+		c.bottom(-_sol[row + 1][col]->top());
+	}
 
-	for (const auto &type: goodTypes) {
-		TypesMap newMap = typesMap;
-		PuzzlePiece* piece = newMap.getPiece(type);
+	return c;
+}
 
-		if (piece != nullptr) {
-			_sol[col][row]= piece;
+bool RotationSolver::fillFrames(int rowSize, int colSize, int index, int x, int y, TypesMap &typesMap) {
+	auto constraints = getConstraints(x, y);
+	auto goodTypes = typesMap.getTypes(constraints);
 
-			if (fillRow(rowSize, colSize, row, col + 1, newMap)) {
+	for (auto &type: goodTypes) {
+		auto piece = typesMap.getPiece(type);
+
+		if (piece == nullptr) {
+			continue;
+		}
+
+		_sol[x][y] = piece;
+
+		// TODO: Export to another function
+		int newX = -1, newY = -y;
+
+		if (x == index) {
+			if (x < index + colSize) {
+				newX = x;
+				newY = y + 1;
+			} else {
+				newX = x + 1;
+				newY = y;
+			}
+		} else if (y == index + colSize - 1) {
+			if (x > index + rowSize - 1) {
+				newX = x + 1;
+				newY = y;
+			} else {
+				newX = x;
+				newY = y - 1;
+			}
+		} else if (x == index + rowSize - 1) {
+			if (y > index) {
+				newX = x;
+				newY = y - 1;
+			} else {
+				newX = x - 1;
+				newY = y;
+			}
+		} else {
+			if (x > index) {
+				newX = x - 1;
+				newY = y;
+			}
+		}
+
+		if (newX < 0) {
+			int newIndex = index + 1;
+			if (fillFrames(rowSize, colSize, newIndex, newIndex, newIndex, typesMap)) {
 				return true;
 			}
-			else{
-				_sol[col][row] = nullptr;
-			}
+		} else if (fillFrames(rowSize, colSize, index, newX, newY, typesMap)) {
+			return true;
 		}
+
+		_sol[x][y] = nullptr;
 	}
 
 	return false;
 }
 
+RotationSolver::RotationSolver(Puzzle *puzzle, bool _rotate) : _puzzle(puzzle), _rotate(_rotate)
+{
+	int size = _puzzle->size();
 
-bool RotationSolver::topRow(int rowSize, int colSize, int row_top, int col, TypesMap &typesMap) {
-	return fillRow(rowSize, colSize, row_top, col, typesMap);
+	for (int i = 1; i <= size; i++) {
+		if (size % i == 0) {
+			_rowLengths.insert(i);
+		}
+	}
+
+	// TODO: Basic input checks
 }
 
-bool RotationSolver::bottomRow(int rowSize, int colSize, int row_bott, int col, TypesMap &typesMap) {
-	return fillRow(rowSize, colSize, row_bott, col, typesMap);
-}
+bool RotationSolver::solve() {
+	TypesMap typesMap(_puzzle, _rotate);
 
-bool RotationSolver::fillCol(int rowSize, int colSize, int col, int row_top, int row_bott, TypesMap &typesMap) {
-	if (row_top > row_bott) {
-		return true;
-	}
-	else{
-		TypesMap::Constraints c;
-		if (col-1 > 0) {
-			PuzzlePiece* myLeft = _sol[col-1][row_top];
-			if (myLeft == nullptr) {
-				c.left(-2);
-			} else {
-				c.left(getPair(myLeft->left()));
-			}
+	for (auto length: _rowLengths) {
+		auto height = _puzzle->size() / length;
+		_sol = RotationSolution(height, length);
 
-		} else {
-			c.left(0);
-		}
-
-		if (col+1 < colSize) {
-			PuzzlePiece* myTop = _sol[col+1][row_top];
-			if (myTop == nullptr) {
-				c.top(-2);
-			} else {
-				c.top(getPair(myTop->top()));
-			}
-		} else {
-			c.top(0);
-		}
-
-		if (row_top+1 < rowSize) {
-			PuzzlePiece* myBottom = _sol[col][row_top+1];
-			if (myBottom == nullptr) {
-				c.bottom(-2);
-			} else {
-				c.bottom(getPair(myBottom->bottom()));
-			}
-		} else {
-			c.bottom(0);
-		}
-
-		if (row_top-1 > 0) {
-			PuzzlePiece* myright = _sol[col][row_top-1];
-			if (myright == nullptr) {
-				c.right(-2);
-			} else {
-				c.right(getPair(myright->right()));
-			}
-		} else {
-			c.right(0);
-		}
-
-		auto list = typesMap.getTypes(c);
-		if (! list.empty()) {
-			for (const auto &type: list) {
-				TypesMap newMap = typesMap;
-				PuzzlePiece* piece = newMap.getPiece(type);
-				if (piece != nullptr) {
-					_sol[col][row_top]= piece;
-					bool b= fillCol(rowSize, colSize, col, row_top+1, row_bott, newMap);
-					if (b) {
-						return true;
-					}
-					else{
-						_sol[col][row_top]= nullptr;
-					}
-				}
-			}
-			return false;
-		}
-		else{
-			return false;
-		}
-	}
-}
-
-bool RotationSolver::leftCol(int rowSize, int colSize, int col, int row_top, int row_bott, TypesMap &typesMap) {
-	return fillCol(rowSize, colSize, col, row_top, row_bott, typesMap);
-}
-
-bool RotationSolver::rightCol(int rowSize, int colSize, int col_right, int row_top, int row_bott, TypesMap &typesMap) {
-	return fillCol(rowSize, colSize, col_right, row_top, row_bott, typesMap);
-}
-
-bool RotationSolver::fillFrames(int rowSize, int colSize, int row_top, int row_bott,
-								int col, int col_right, TypesMap &typesMap) {
-
-	if (col > col_right && row_top > row_bott) {
-		return true;
-	}
-
-	if (col < col_right && row_top < row_bott) {
-		if (topRow(rowSize, colSize, row_top, col, typesMap) &&
-			bottomRow(rowSize, colSize, row_bott, col, typesMap) &&
-			rightCol(rowSize, colSize, col_right, row_top, row_bott, typesMap) &&
-			leftCol(rowSize, colSize, col, row_top, row_bott, typesMap))
-		{
-			fillFrames(rowSize, colSize, row_top + 1, row_bott - 1, col +1, col_right -1, typesMap);
-		} else {
-			return false;
+		if (fillFrames(length, height, 0, 0, 0, typesMap)) {
+			return true;
 		}
 	}
 
-	if (col == col_right && row_top < row_bott) {
-		if (topRow(rowSize, colSize, row_top, col, typesMap) &&
-			bottomRow(rowSize, colSize, row_bott, col, typesMap) &&
-			leftCol(rowSize, colSize, col, row_top, row_bott, typesMap))
-		{
-			fillFrames(rowSize, colSize, row_top + 1, row_bott - 1, col +1, col_right, typesMap);
-		} else {
-			return false;
-		}
-	}
-	if (col < col_right && row_top == row_bott) {
-		if (leftCol(rowSize, colSize, col, row_top, row_bott, typesMap) &&
-			rightCol(rowSize, colSize, col_right, row_top, row_bott, typesMap) &&
-			topRow(rowSize, colSize, row_top, col, typesMap))
-		{
-			fillFrames(rowSize, colSize, row_top + 1, row_bott, col +1, col_right -1, typesMap);
-		} else {
-			return false;
-		}
-	}
-	if (col == col_right && row_top == row_bott) {
-		if (topRow(rowSize, colSize, row_top, col, typesMap) &&
-			leftCol(rowSize, colSize, col, row_top, row_bott, typesMap))
-		{
-			fillFrames(rowSize, colSize, row_top + 1, row_bott, col +1, col_right, typesMap);
-		} else {
-			return false;
-		}
-	}
-	if (col < col_right && row_top > row_bott) {
-		if (leftCol(rowSize, colSize, col, row_top, row_bott, typesMap) &&
-			rightCol(rowSize, colSize, col_right, row_top, row_bott, typesMap))
-		{
-			fillFrames(rowSize, colSize, row_top, row_bott, col +1, col_right -1, typesMap);
-		} else {
-			return false;
-		}
-	}
-	if (col > col_right && row_top < row_bott) {
-		if (topRow(rowSize, colSize, row_top, col, typesMap) &&
-			bottomRow(rowSize, colSize, row_bott, col, typesMap))
-		{
-			fillFrames(rowSize, colSize, row_top+1, row_bott-1, col, col_right, typesMap);
-		} else {
-			return false;
-		}
-	}
+	// TODO: validate
+
 	return false;
+}
+
+RotationSolution RotationSolver::getSol() {
+	return _sol;
 }
 
 

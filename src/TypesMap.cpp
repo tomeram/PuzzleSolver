@@ -192,3 +192,7 @@ TypesMap::Constraints::Constraints(int l, int t, int r, int b) : PuzzlePiece(-2,
 bool operator<(const TypesMap::Constraints &left, const TypesMap::Constraints &right) {
     return left.getType() < right.getType();
 }
+
+bool TypesMap::empty() {
+	return _types.empty();
+}

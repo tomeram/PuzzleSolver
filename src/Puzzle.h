@@ -22,6 +22,8 @@ public:
 
     vector<PuzzlePiece> getPieces() const;
 
+	int size();
+
 private:
     vector<PuzzlePiece> pieces;
 };

@@ -106,7 +106,11 @@ def main(args):
 
         print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read())
 
-        validateSolution('./ignored/tester.txt', './ignored/test.out')
+        try:
+            validateSolution('./ignored/tester.txt', './ignored/test.out')
+        except:
+            print('Failed :(')
+            return
 
 
 if __name__ == '__main__':

@@ -23,3 +23,7 @@ vector<PuzzlePiece> Puzzle::getPieces() const
 {
     return this->pieces;
 }
+
+int Puzzle::size() {
+	return pieces.size();
+}

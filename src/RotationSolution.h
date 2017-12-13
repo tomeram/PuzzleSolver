@@ -6,9 +6,10 @@
 #define PUZZLESOLVER_ROTATIONSOLUTION_H
 
 #include <vector>
+#include <fstream>
 #include "PuzzlePiece.h"
 
-using std::vector;
+using namespace std;
 
 class RotationSolution {
 private:
@@ -16,9 +17,17 @@ private:
 	vector<vector<PuzzlePiece*>> _matrix;
 
 public:
+	RotationSolution();
+
 	RotationSolution(int height, int width);
 
-	vector<PuzzlePiece*> operator[](int row);
+	vector<PuzzlePiece*> operator[](int row) const;
+
+	int get_height() const;
+
+	int get_width() const;
+
+	void print(ofstream *pOfstream);
 };
 
 

@@ -46,6 +46,8 @@ public:
     vector<Constraints> getTypes(Constraints &c) const;
 
     PuzzlePiece* getPiece(Constraints type);
+
+	bool empty();
 };
 
 
