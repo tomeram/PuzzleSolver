@@ -53,9 +53,9 @@ bool TypesMap::find(string type)
 
 const auto SIDES = {-1, 0, 1};
 
-set<string> TypesMap::checkBottom(Constraints &c, Constraints &p) const
+set<TypesMap::Constraints> TypesMap::checkBottom(Constraints &c, Constraints &p) const
 {
-    set<string> res;
+    set<TypesMap::Constraints> res;
     auto sides = SIDES;
 
     if (c.bottom() > -2) {
@@ -71,7 +71,7 @@ set<string> TypesMap::checkBottom(Constraints &c, Constraints &p) const
             p.rotate(i);
             if (_types.find(p.getType()) != _types.end()) {
                 p.rotate(0);
-                res.insert(p.getType());
+                res.insert(p);
 
                 break;
             }
@@ -81,10 +81,10 @@ set<string> TypesMap::checkBottom(Constraints &c, Constraints &p) const
     return res;
 }
 
-set<string> TypesMap::checkRight(Constraints &c, Constraints &p) const
+set<TypesMap::Constraints> TypesMap::checkRight(Constraints &c, Constraints &p) const
 {
-    set<string> res;
-    set<string> tmp;
+    set<TypesMap::Constraints> res;
+    set<TypesMap::Constraints> tmp;
 
     auto sides = SIDES;
 
@@ -101,10 +101,10 @@ set<string> TypesMap::checkRight(Constraints &c, Constraints &p) const
     return res;
 }
 
-set<string> TypesMap::checkTop(Constraints &c, Constraints &p) const
+set<TypesMap::Constraints> TypesMap::checkTop(Constraints &c, Constraints &p) const
 {
-    set<string> res;
-    set<string> tmp;
+    set<TypesMap::Constraints> res;
+    set<TypesMap::Constraints> tmp;
 
     auto sides = SIDES;
 
@@ -121,10 +121,10 @@ set<string> TypesMap::checkTop(Constraints &c, Constraints &p) const
     return res;
 }
 
-set<string> TypesMap::checkLeft(Constraints &c, Constraints &p) const
+set<TypesMap::Constraints> TypesMap::checkLeft(Constraints &c, Constraints &p) const
 {
-    set<string> res;
-    set<string> tmp;
+    set<TypesMap::Constraints> res;
+    set<TypesMap::Constraints> tmp;
 
     auto sides = SIDES;
 
@@ -141,24 +141,54 @@ set<string> TypesMap::checkLeft(Constraints &c, Constraints &p) const
     return res;
 }
 
-vector<string> TypesMap::getTypes(Constraints c) const
+vector<TypesMap::Constraints> TypesMap::getTypes(Constraints &c) const
 {
     Constraints p;
-    set<string> resSet = checkLeft(c, p);
+    set<TypesMap::Constraints> resSet = checkLeft(c, p);
 
 
-    vector<string> res;
+    vector<TypesMap::Constraints> res;
     res.insert(res.end(), resSet.begin(), resSet.end());
 
     return res;
 }
 
-PuzzlePiece *TypesMap::getPiece(string type)
+PuzzlePiece *TypesMap::getPiece(Constraints type)
 {
-    // TODO
-    type = "5";
+    int rotations = _rotate ? 4 : 1;
+
+    for (int i = 0; i < rotations; i++) {
+        type.rotate(i);
+        auto strType = type.getType();
+
+
+        if (_types.find(strType) == _types.end()) {
+            continue;
+        }
+
+        vector<int> &pieces = _types[strType];
+        type.rotate(0);
+
+        int id = pieces.at(0);
+        pieces.erase(pieces.begin());
+
+        if (pieces.empty()) {
+            _types.erase(strType);
+        }
+
+        auto *piece = &_puzzle->getPieceById(id);
+        piece->rotate((4 - i) % 4);
+
+        return piece;
+    }
+
     return nullptr;
 }
 
 TypesMap::Constraints::Constraints() : PuzzlePiece(-2, -2, -2, -2, -2) {}
+
 TypesMap::Constraints::Constraints(int l, int t, int r, int b) : PuzzlePiece(-2, l, t, r, b) {}
+
+bool operator<(const TypesMap::Constraints &left, const TypesMap::Constraints &right) {
+    return left.getType() < right.getType();
+}

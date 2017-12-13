@@ -50,7 +50,7 @@ bool checkUsedPieces(vector<unsigned int> &usedPieces, unsigned int pieceNum)
     return true;
 }
 
-bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
+bool PuzzleValidator::validate(Puzzle &puzzle, const PuzzleSolution &sol)
 {
     if (sol.empty()) {
         return false;

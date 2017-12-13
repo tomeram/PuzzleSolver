@@ -13,7 +13,7 @@
 
 class PuzzleValidator {
 public:
-    static bool validate(const Puzzle &puzzle, const PuzzleSolution &sol);
+    static bool validate(Puzzle &puzzle, const PuzzleSolution &sol);
 };
 
 

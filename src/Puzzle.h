@@ -16,7 +16,7 @@ public:
 
     ~Puzzle() = default;
 
-    const PuzzlePiece &getPieceById(int id) const;
+    PuzzlePiece &getPieceById(int id);
 
     unsigned long getPieceNumber() const;
 

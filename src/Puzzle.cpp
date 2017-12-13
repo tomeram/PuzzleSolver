@@ -10,8 +10,8 @@ Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(move(newPieces))
     sort(pieces.begin(), pieces.end(), PuzzlePiece::compare);
 }
 
-const PuzzlePiece &Puzzle::getPieceById(int id) const {
-    const auto &res = pieces.at(id - 1);
+PuzzlePiece &Puzzle::getPieceById(int id) {
+    auto &res = pieces.at(id - 1);
     return res;
 }
 

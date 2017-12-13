@@ -5,6 +5,7 @@
 #ifndef PUZZLESOLVER_TYPESMAP_H
 #define PUZZLESOLVER_TYPESMAP_H
 
+#include <set>
 #include <map>
 #include <string>
 #include <vector>
@@ -14,12 +15,13 @@ using namespace std;
 
 class TypesMap {
 public:
-    class Constraints : PuzzlePiece {
+    class Constraints : public PuzzlePiece {
     private:
         friend class TypesMap;
     public:
         Constraints();
         Constraints(int l, int t, int r, int b);
+        friend bool operator< (const Constraints &left, const Constraints &right);
     };
 
 private:
@@ -27,10 +29,10 @@ private:
     Puzzle *_puzzle;
     bool _rotate;
 
-    set<string> checkBottom(Constraints &c, Constraints &p) const;
-    set<string> checkRight(Constraints &c, Constraints &p) const;
-    set<string> checkTop(Constraints &c, Constraints &p) const;
-    set<string> checkLeft(Constraints &c, Constraints &p) const;
+    set<Constraints> checkBottom(Constraints &c, Constraints &p) const;
+    set<Constraints> checkRight(Constraints &c, Constraints &p) const;
+    set<Constraints> checkTop(Constraints &c, Constraints &p) const;
+    set<Constraints> checkLeft(Constraints &c, Constraints &p) const;
 
 public:
     explicit TypesMap(Puzzle *puzzle, bool rotate = false);
@@ -41,9 +43,9 @@ public:
 
     bool find(string basic_string);
 
-    vector<string> getTypes(Constraints c) const;
+    vector<Constraints> getTypes(Constraints &c) const;
 
-    PuzzlePiece* getPiece(string type);
+    PuzzlePiece* getPiece(Constraints type);
 };
 
 
