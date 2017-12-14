@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import random
 
 MAC_PATH = './cmake-build-debug/PuzzleSolver'
@@ -90,9 +91,9 @@ def main(args):
     if len(args) > 1 and args[1] == 'mac':
         EXE_PATH = MAC_PATH
 
-    for i in range(10):
-        x = 2
-        y = 2
+    for i in range(1):
+        x = 6
+        y = 6
 
         with open('./ignored/tester.txt', 'w+') as f:
             f.write('NumElements=' + str(x * y) + '\n')
@@ -104,7 +105,10 @@ def main(args):
                     i += 1
                     f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
+        start = time.time()
         print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read())
+        end = time.time()
+        print('Elapsed time: ' + str(end - start))
 
         try:
             validateSolution('./ignored/tester.txt', './ignored/test.out')
