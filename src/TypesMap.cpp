@@ -7,7 +7,6 @@
 
 TypesMap::TypesMap(Puzzle *puzzle, bool rotate) : _puzzle(puzzle), _rotate(rotate)
 {
-    _rotate = true;
     for (PuzzlePiece &p: _puzzle->getPieces()) {
         addPiece(&p);
     }
