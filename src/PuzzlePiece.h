@@ -16,7 +16,6 @@ public:
     int sides[4];
 
     PuzzlePiece(int id, int l, int t, int r, int b);
-    virtual ~PuzzlePiece();
 
     void rotate(int rotation);
 

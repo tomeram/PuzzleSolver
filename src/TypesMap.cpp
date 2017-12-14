@@ -8,30 +8,8 @@
 TypesMap::TypesMap(Puzzle *puzzle, bool rotate) : _puzzle(puzzle), _rotate(rotate)
 {
     _rotate = true;
-    for (PuzzlePiece p: _puzzle->getPieces()) {
-        bool found = false;
-        int rotations = 1;
-
-        if (_rotate) {
-            rotations = 4;
-        }
-
-        for (int i = 0; i < rotations; i++) {
-            p.rotate(i);
-
-            auto type = p.getType();
-
-            if (_types.find(type) != _types.end()) {
-                _types[type].push_back(p.id);
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            p.rotate(0);
-            _types[p.getType()] = {p.id};
-        }
+    for (PuzzlePiece &p: _puzzle->getPieces()) {
+        addPiece(&p);
     }
 }
 
@@ -176,7 +154,7 @@ PuzzlePiece *TypesMap::getPiece(Constraints type)
             _types.erase(strType);
         }
 
-        auto *piece = &_puzzle->getPieceById(id);
+        auto piece = &_puzzle->getPieceById(id);
         piece->rotate((4 - i) % 4);
 
         return piece;
@@ -193,6 +171,28 @@ bool operator<(const TypesMap::Constraints &left, const TypesMap::Constraints &r
     return left.getType() < right.getType();
 }
 
-bool TypesMap::empty() {
-	return _types.empty();
+void TypesMap::addPiece(PuzzlePiece *piece) {
+	bool found = false;
+	int rotations = 1;
+
+	if (_rotate) {
+		rotations = 4;
+	}
+
+	for (int i = 0; i < rotations; i++) {
+		piece->rotate(i);
+
+		auto type = piece->getType();
+
+		if (_types.find(type) != _types.end()) {
+			_types[type].push_back(piece->id);
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		piece->rotate(0);
+		_types[piece->getType()] = {piece->id};
+	}
 }

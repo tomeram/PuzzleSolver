@@ -47,7 +47,7 @@ public:
 
     PuzzlePiece* getPiece(Constraints type);
 
-	bool empty();
+	void addPiece(PuzzlePiece *piece);
 };
 
 

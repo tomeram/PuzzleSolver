@@ -21,13 +21,17 @@ public:
 
 	RotationSolution(int height, int width);
 
-	vector<PuzzlePiece*> operator[](int row) const;
+	vector<PuzzlePiece*>& operator[](int row);
 
 	int get_height() const;
 
 	int get_width() const;
 
 	void print(ofstream *pOfstream);
+
+	RotationSolution& operator=(const RotationSolution &other) = delete;
+
+	void resize(int height, int width);
 };
 
 

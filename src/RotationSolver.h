@@ -19,13 +19,13 @@ private:
 	bool _rotate = false;
 	set<int> _rowLengths;
 
-	TypesMap::Constraints getConstraints(int row, int col) const;
+	TypesMap::Constraints getConstraints(int row, int col);
 
-	bool fillFrames(int rowSize, int colSize, int index, int x, int y, TypesMap &typesMap);
+	bool fillFrames(int rowSize, int colSize, int corner, int col, int row, TypesMap &typesMap);
 public:
 	RotationSolver() = default;
 
-	explicit RotationSolver(Puzzle *puzzle, bool _rotate);
+	RotationSolver(Puzzle *puzzle, bool _rotate);
 
 	bool solve();
 

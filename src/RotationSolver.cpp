@@ -4,43 +4,69 @@
 
 #include "RotationSolver.h"
 
-TypesMap::Constraints RotationSolver::getConstraints(int row, int col) const
+TypesMap::Constraints RotationSolver::getConstraints(int row, int col)
 {
 	TypesMap::Constraints c;
+
+	PuzzlePiece *neighbour;
 
 	// LEFT
 	if (col == 0) {
 		c.left(0);
 	} else {
-		c.left(-_sol[row][col - 1]->right());
+		neighbour = _sol[row][col - 1];
+
+		if (neighbour != nullptr) {
+			c.left(-neighbour->right());
+		} else {
+			c.left(-2);
+		}
 	}
 
 	// TOP
 	if (row == 0) {
 		c.top(0);
 	} else {
-		c.top(-_sol[row - 1][col]->bottom());
+		neighbour = _sol[row - 1][col];
+
+		if (neighbour != nullptr) {
+			c.top(-neighbour->bottom());
+		} else {
+			c.top(-2);
+		}
 	}
 
 	// RIGHT
 	if (col == _sol.get_width() - 1) {
 		c.right(0);
 	} else {
-		c.right(-_sol[row][col + 1]->left());
+		neighbour = _sol[row][col + 1];
+
+		if (neighbour != nullptr) {
+			c.right(-neighbour->left());
+		} else {
+			c.right(-2);
+		}
 	}
 
 	// BOTTOM
 	if (row == _sol.get_height() - 1) {
 		c.bottom(0);
 	} else {
-		c.bottom(-_sol[row + 1][col]->top());
+		neighbour = _sol[row + 1][col];
+
+		if (neighbour != nullptr) {
+			c.bottom(-neighbour->top());
+		} else {
+			c.bottom(-2);
+		}
 	}
 
 	return c;
 }
 
-bool RotationSolver::fillFrames(int rowSize, int colSize, int index, int x, int y, TypesMap &typesMap) {
-	auto constraints = getConstraints(x, y);
+bool RotationSolver::fillFrames(int rowSize, int colSize, int corner, int col, int row, TypesMap &typesMap) {
+	auto constraints = getConstraints(row, col);
 	auto goodTypes = typesMap.getTypes(constraints);
 
 	for (auto &type: goodTypes) {
@@ -50,52 +76,63 @@ bool RotationSolver::fillFrames(int rowSize, int colSize, int index, int x, int 
 			continue;
 		}
 
-		_sol[x][y] = piece;
+		_sol[col][row] = piece;
 
 		// TODO: Export to another function
-		int newX = -1, newY = -y;
+		int newCol = -1, newRow = -1;
 
-		if (x == index) {
-			if (x < index + colSize) {
-				newX = x;
-				newY = y + 1;
+		int lastRow = corner + colSize - 1;
+		int lastCol = corner + rowSize - 1;
+
+		if (row == corner) {
+			if (col < lastCol) {
+				newCol = col + 1;
+				newRow = row;
 			} else {
-				newX = x + 1;
-				newY = y;
+				newCol = col;
+				newRow = row + 1;
 			}
-		} else if (y == index + colSize - 1) {
-			if (x > index + rowSize - 1) {
-				newX = x + 1;
-				newY = y;
+		} else if (col == lastCol) {
+			if (row < lastRow) {
+				newCol = col;
+				newRow = row + 1;
 			} else {
-				newX = x;
-				newY = y - 1;
+				newCol = col - 1;
+				newRow = row;
 			}
-		} else if (x == index + rowSize - 1) {
-			if (y > index) {
-				newX = x;
-				newY = y - 1;
+		} else if (col == lastRow) {
+			if (col > corner) {
+				newCol = col - 1;
+				newRow = row;
 			} else {
-				newX = x - 1;
-				newY = y;
+				newCol = col;
+				newRow = row - 1;
 			}
 		} else {
-			if (x > index) {
-				newX = x - 1;
-				newY = y;
+			if (row > corner) {
+				newCol = col;
+				newRow = row - 1;
 			}
 		}
 
-		if (newX < 0) {
-			int newIndex = index + 1;
-			if (fillFrames(rowSize, colSize, newIndex, newIndex, newIndex, typesMap)) {
-				return true;
+		if (newCol < 0) {
+			int newIndex = corner + 1;
+
+			auto min = std::min(_sol.get_height(), _sol.get_width());
+
+			min = (min / 2) + (min % 2);
+
+			if (corner < min) {
+				if (fillFrames(rowSize, colSize, newIndex, newIndex, newIndex, typesMap)) {
+					return true;
+				}
 			}
-		} else if (fillFrames(rowSize, colSize, index, newX, newY, typesMap)) {
+		} else if (fillFrames(rowSize, colSize, corner, newCol, newRow, typesMap)) {
 			return true;
 		}
 
-		_sol[x][y] = nullptr;
+		typesMap.addPiece(piece);
+		_sol[col][row] = nullptr;
 	}
 
 	return false;
@@ -119,7 +156,7 @@ bool RotationSolver::solve() {
 
 	for (auto length: _rowLengths) {
 		auto height = _puzzle->size() / length;
-		_sol = RotationSolution(height, length);
+		_sol.resize(height, length);
 
 		if (fillFrames(length, height, 0, 0, 0, typesMap)) {
 			return true;

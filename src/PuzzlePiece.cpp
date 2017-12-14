@@ -16,8 +16,6 @@ PuzzlePiece::PuzzlePiece(int id, int l = -2, int t = -2, int r = -2, int b = -2)
     sides[3] = b;
 }
 
-PuzzlePiece::~PuzzlePiece() {}
-
 void PuzzlePiece::rotate(int rotation)
 {
     this->rotation = rotation;

@@ -5,14 +5,13 @@
 #include <algorithm>
 #include "Puzzle.h"
 
-Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(move(newPieces))
+Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(newPieces)
 {
     sort(pieces.begin(), pieces.end(), PuzzlePiece::compare);
 }
 
-PuzzlePiece &Puzzle::getPieceById(int id) {
-    auto &res = pieces.at(id - 1);
-    return res;
+PuzzlePiece &Puzzle::getPieceById(int id) {;
+    return pieces.at(id - 1);
 }
 
 unsigned long Puzzle::getPieceNumber() const {
