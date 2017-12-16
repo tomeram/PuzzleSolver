@@ -65,55 +65,55 @@ TypesMap::Constraints RotationSolver::getConstraints(int row, int col)
 	return c;
 }
 
-bool RotationSolver::fillFrames(int rowSize, int colSize, int corner, int col, int row, TypesMap &typesMap) {
+void getNextCell(int corner, int colSize, int rowSize, int row, int col, int &newRow, int &newCol)
+{
+	int lastRow = corner + colSize - 1;
+	int lastCol = corner + rowSize - 1;
+
+	if (row == corner) {
+		if (col < lastCol) {
+			newCol = col + 1;
+			newRow = row;
+		} else if (row < lastRow) {
+			newCol = col;
+			newRow = row + 1;
+		}
+	} else if (col == lastCol) {
+		if (row < lastRow) {
+			newCol = col;
+			newRow = row + 1;
+		} else {
+			newCol = col - 1;
+			newRow = row;
+		}
+	} else if (row == lastRow) {
+		if (col > corner) {
+			newCol = col - 1;
+			newRow = row;
+		} else {
+			newCol = col;
+			newRow = row - 1;
+		}
+	} else {
+		if (row > corner + 1) {
+			newCol = col;
+			newRow = row - 1;
+		}
+	}
+}
+
+bool RotationSolver::fillFrames(int rowSize, int colSize, int corner, int col, int row, TypesMap &typesMap)
+{
 	auto constraints = getConstraints(row, col);
 	auto goodTypes = typesMap.getTypes(constraints);
 
 	for (auto &type: goodTypes) {
 		auto piece = typesMap.getPiece(type);
 
-		if (piece == nullptr) {
-			continue;
-		}
-
 		_sol[row][col] = piece;
 
-		// TODO: Export to another function
 		int newCol = -1, newRow = -1;
-
-		int lastRow = corner + colSize - 1;
-		int lastCol = corner + rowSize - 1;
-
-		if (row == corner) {
-			if (col < lastCol) {
-				newCol = col + 1;
-				newRow = row;
-			} else if (row < lastRow) {
-				newCol = col;
-				newRow = row + 1;
-			}
-		} else if (col == lastCol) {
-			if (row < lastRow) {
-				newCol = col;
-				newRow = row + 1;
-			} else {
-				newCol = col - 1;
-				newRow = row;
-			}
-		} else if (row == lastRow) {
-			if (col > corner) {
-				newCol = col - 1;
-				newRow = row;
-			} else {
-				newCol = col;
-				newRow = row - 1;
-			}
-		} else {
-			if (row > corner + 1) {
-				newCol = col;
-				newRow = row - 1;
-			}
-		}
+		getNextCell(corner, colSize, rowSize, row, col, newRow, newCol);
 
 		if (newCol < 0 || (newRow == corner && newCol == corner)) {
 			int newIndex = corner + 1;
