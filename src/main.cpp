@@ -25,15 +25,19 @@ int main(int argc, char** argv)
 	string input, output;
 
 	if (argc == 4) {
-		if (argv[1] == "-rotate") {
+		string arg1 = argv[1];
+		string arg2 = argv[2];
+		string arg3 = argv[3];
+
+		if (arg1 == "-rotate") {
 			rotation = true;
 			input = argv[2];
 			output = argv[3];
-		} else if (argv[2] == "-rotate") {
+		} else if (arg2 == "-rotate") {
 			rotation = true;
 			input = argv[1];
 			output = argv[3];
-		} else if (argv[3] == "-rotate") {
+		} else if (arg3 == "-rotate") {
 			rotation = true;
 			input = argv[1];
 			output = argv[2];
