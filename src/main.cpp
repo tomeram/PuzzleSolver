@@ -9,67 +9,82 @@
 
 void printUsage(const string &arg0)
 {
-    cout << "Please supply correct input and output file paths:" << endl
-         << arg0 << " <input_file> <output_file> [-rotate]" << endl;
+	cout << "Please supply correct input and output file paths:" << endl
+		 << arg0 << " <input_file> <output_file> [-rotate]" << endl;
 }
 
 int main(int argc, char** argv)
 {
-    bool rotation = false;
+	bool rotation = false;
 
-    if (argc < 3 || argc > 4) {
-        printUsage(argv[0]);
-        return 1;
-    }
+	if (argc < 3 || argc > 4) {
+		printUsage(argv[0]);
+		return 1;
+	}
 
-    if (argc == 4) {
-        string rotateFlag = argv[4];
+	string input, output;
 
-        if (rotateFlag == "-rotate") {
-            rotation = true;
-        } else {
-            printUsage(argv[0]);
-            return 1;
-        }
-    }
+	if (argc == 4) {
+		if (argv[1] == "-rotate") {
+			rotation = true;
+			input = argv[2];
+			output = argv[3];
+		} else if (argv[2] == "-rotate") {
+			rotation = true;
+			input = argv[1];
+			output = argv[3];
+		} else if (argv[3] == "-rotate") {
+			rotation = true;
+			input = argv[1];
+			output = argv[2];
+		}
 
-    vector<PuzzlePiece> pieces;
+		if (!rotation) {
+			printUsage(argv[0]);
+			return 1;
+		}
+	} else {
+		input = argv[1];
+		output = argv[2];
+	}
 
-    ofstream outputFile;
-    outputFile.open((argv[2]));
+	vector<PuzzlePiece> pieces;
 
-    InputReader reader(&outputFile);
+	ofstream outputFile;
+	outputFile.open(output);
 
-    try {
-        reader.readInput(argv[1], pieces);
-    } catch (int e) {
-        switch (e) {
-            case 1:
-                printUsage(argv[0]);
-                break;
-            case 2:
-                cout << "Invalid file format" << endl;
-                break;
-            case 3:
-                // General Error - handled in InputReader
-                break;
-            default:
-                cout << "Unhandled exception: " << e << endl;
-                break;
-        }
+	InputReader reader(&outputFile);
 
-        return 1;
-    }
+	try {
+		reader.readInput(input, pieces);
+	} catch (int e) {
+		switch (e) {
+			case 1:
+				printUsage(argv[0]);
+				break;
+			case 2:
+				cout << "Invalid file format" << endl;
+				break;
+			case 3:
+				// General Error - handled in InputReader
+				break;
+			default:
+				cout << "Unhandled exception: " << e << endl;
+				break;
+		}
 
-    if (!reader.valid) {
-        outputFile.close();
+		return 1;
+	}
 
-        return 1;
-    }
+	if (!reader.valid) {
+		outputFile.close();
 
-    Puzzle puzzle(pieces);
+		return 1;
+	}
 
-    RotationSolver solver(&puzzle, rotation);
+	Puzzle puzzle(pieces);
+
+	RotationSolver solver(&puzzle, rotation);
 
 	// TODO: Validate
 //    if (!solver.isValid()) {
@@ -77,13 +92,13 @@ int main(int argc, char** argv)
 //        return 1;
 //    }
 
-    if (solver.solve()) {
-        solver.getSol().print(&outputFile);
-    } else {
-        outputFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
-    }
+	if (solver.solve()) {
+		solver.getSol().print(&outputFile);
+	} else {
+		outputFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
+	}
 
-    outputFile.close();
+	outputFile.close();
 
-    return 0;
+	return 0;
 }
