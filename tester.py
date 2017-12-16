@@ -91,7 +91,7 @@ def main(args):
     if len(args) > 1 and args[1] == 'mac':
         EXE_PATH = MAC_PATH
 
-    for i in range(1):
+    for i in range(10):
         x = 6
         y = 6
 

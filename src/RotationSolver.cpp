@@ -192,7 +192,21 @@ RotationSolver::RotationSolver(Puzzle *puzzle, bool _rotate) : _puzzle(puzzle), 
 bool RotationSolver::solve() {
 	TypesMap typesMap(_puzzle, _rotate);
 
-	for (auto length: _rowLengths) {
+	vector<int> lengths(_rowLengths.begin(), _rowLengths.end()), res;
+	int size = lengths.size();
+	int mid = (size / 2) + (size % 2);
+
+	for (int i = 0; i < mid; i++) {
+		res.push_back(lengths[mid - i]);
+
+		if (mid - i == mid + i) {
+			continue;
+		}
+
+		res.push_back(lengths[mid + i]);
+	}
+
+	for (auto length: res) {
 		auto height = _puzzle->size() / length;
 		_sol.resize(height, length);
 
