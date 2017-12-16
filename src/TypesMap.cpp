@@ -41,18 +41,20 @@ set<TypesMap::Constraints> TypesMap::checkBottom(Constraints &c, Constraints &p)
 
     for (auto side: sides) {
         p.bottom(side);
+		// TODO: Decide method
+		res.insert(p);
 
-        int rotations = _rotate ? 4 : 1;
-
-        for (int i = 0; i < rotations; i++) {
-            p.rotate(i);
-            if (_types.find(p.getType()) != _types.end()) {
-                p.rotate(0);
-                res.insert(p);
-
-                break;
-            }
-        }
+//        int rotations = _rotate ? 4 : 1;
+//
+//        for (int i = 0; i < rotations; i++) {
+//            p.rotate(i);
+//            if (_types.find(p.getType()) != _types.end()) {
+//                p.rotate(0);
+//                res.insert(p);
+//
+//                break;
+//            }
+//        }
     }
 
     return res;

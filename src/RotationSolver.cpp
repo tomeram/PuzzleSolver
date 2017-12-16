@@ -110,6 +110,10 @@ bool RotationSolver::fillFrames(int rowSize, int colSize, int corner, int col, i
 	for (auto &type: goodTypes) {
 		auto piece = typesMap.getPiece(type);
 
+		if (piece == nullptr) {
+			continue;
+		}
+
 		_sol[row][col] = piece;
 
 		int newCol = -1, newRow = -1;
