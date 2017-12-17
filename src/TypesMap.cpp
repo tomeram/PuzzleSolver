@@ -119,10 +119,10 @@ int TypesMap::countBottomEdges() {
 	for (const auto &type: _types) {
 		if (_rotate) {
 			if (type.first.find("0") != string::npos) {
-				res++;
+				res += type.second.size();
 			}
 		} else if (type.first.back() == '0') {
-			res++;
+			res += type.second.size();
 		}
 	}
 
