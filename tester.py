@@ -102,33 +102,43 @@ def validateSolution(inFile, outFile):
     matrix = []
     lines = output.split('\n')
 
-    for i in range(len(lines)):
+    for row in range(len(lines)):
         matrix.append([])
-        cols = lines[i].split()
+        cols = lines[row].split()
 
         colsIter = iter(range(len(cols)))
+        col = -1
 
         for j in colsIter:
+            col += 1
             id = cols[j]
-            matrix[i].append(id)
+            matrix[row].append(id)
 
             if id in seen:
                 print('Error: Duplicate piece - ' + str(id))
                 exit(1)
 
             seen.add(id)
+            piece = pieces[id]
 
-            if i == 0 and pieces[matrix[i][j]].top() != 0:
-                print('Error: ' + str(i) + ', ' + str(j))
+            if j + 1 < len(cols) and '[' in cols[j + 1]:
+                s = cols[j + 1].index('[') + 1
+                e = cols[j + 1].index(']')
+                piece.rotate(int(cols[j + 1][s:e]))
+
+                next(colsIter)
+
+            if row == 0 and piece.top() != 0:
+                print('Error: ' + str(row) + ', ' + str(col))
                 exit(1)
-            elif i > 0:
-                if int(pieces[matrix[i][j]].top()) + int(pieces[matrix[i-1][j]].bottom()) != 0:
-                    print('Error: ' + str(i) + ', ' + str(j))
+            elif row > 0:
+                if int(piece.top()) + int(pieces[matrix[row-1][col]].bottom()) != 0:
+                    print('Error: ' + str(row) + ', ' + str(col))
                     exit(1)
 
             if j > 0:
-                if int(pieces[matrix[i][j]].left()) + int(pieces[matrix[i][j-1]].right()) != 0:
-                    print('Error: ' + str(i) + ', ' + str(j))
+                if int(piece.left()) + int(pieces[matrix[row][col-1]].right()) != 0:
+                    print('Error: ' + str(row) + ', ' + str(col))
                     exit(1)
     print('Success!!!')
 
@@ -144,9 +154,9 @@ def main(args):
             elif arg == 'rotate':
                 rotation = True
 
-    for i in range(10):
-        x = 4
-        y = 5
+    for j in range(1, 2):
+        x = 3
+        y = 6
 
         with open('./ignored/tester.txt', 'w+') as f:
             f.write('NumElements=' + str(x * y) + '\n')
@@ -163,6 +173,7 @@ def main(args):
 
         print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out' + rotate).read())
         end = time.time()
+        print('Test ' + str(j))
         print('Elapsed time: ' + str(end - start))
 
         try:
