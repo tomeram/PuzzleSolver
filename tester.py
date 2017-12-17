@@ -7,13 +7,49 @@ MAC_PATH = './cmake-build-debug/PuzzleSolver'
 EXE_PATH = 'cmake-build-debug\PuzzleSolver.exe'
 
 
+class Piece:
+    def __init__(self, l, t, r, b, id):
+        self.id = id
+        self.sides = [l, t, r, b]
+        self.rotation = 0
+
+    def rotate(self, deg=None):
+        if deg == 90:
+            self.rotation = 3
+        elif deg == 180:
+            self.rotation = 2
+        elif deg == 270:
+            self.rotation = 1
+        elif deg is None:
+            self.rotation = 0
+        else:
+            print('error')
+
+    def left(self):
+        return self.sides[self.rotation]
+
+    def top(self):
+        return self.sides[(self.rotation + 1) % 4]
+
+    def right(self):
+        return self.sides[(self.rotation + 2) % 4]
+
+    def bottom(self):
+        return self.sides[(self.rotation + 3) % 4]
+
+
+def rotate_piece(piece):
+    n = random.randrange(0, 3)
+    return piece[-n:] + piece[:-n]
+
+
 def random_side():
     values = [-1, 0, 1]
 
     return random.choice(values)
 
 
-def generate_puzzle(x, y):
+def generate_puzzle(x, y, rotate):
     res = []
 
     for i in range(0, x):
@@ -28,6 +64,10 @@ def generate_puzzle(x, y):
             res[i].append((l, t, r, b))
 
     for line in res:
+        if rotate:
+            for piece in line:
+                rotate_piece(piece)
+
         random.shuffle(line)
 
     random.shuffle(res)
@@ -51,7 +91,12 @@ def validateSolution(inFile, outFile):
         line = line.split()
 
         if len(line) > 0:
-            pieces[line[0]] = line[1:]
+            l = int(line[1])
+            t = int(line[2])
+            r = int(line[3])
+            b = int(line[4])
+
+            pieces[line[0]] = Piece(l, t, r, b, line[0])
 
     seen = set()
     matrix = []
@@ -60,7 +105,10 @@ def validateSolution(inFile, outFile):
     for i in range(len(lines)):
         matrix.append([])
         cols = lines[i].split()
-        for j in range(len(cols)):
+
+        colsIter = iter(range(len(cols)))
+
+        for j in colsIter:
             id = cols[j]
             matrix[i].append(id)
 
@@ -70,16 +118,16 @@ def validateSolution(inFile, outFile):
 
             seen.add(id)
 
-            if i == 0 and pieces[matrix[i][j]][1] != '0':
+            if i == 0 and pieces[matrix[i][j]].top() != 0:
                 print('Error: ' + str(i) + ', ' + str(j))
                 exit(1)
             elif i > 0:
-                if int(pieces[matrix[i][j]][1]) + int(pieces[matrix[i-1][j]][3]) != 0:
+                if int(pieces[matrix[i][j]].top()) + int(pieces[matrix[i-1][j]].bottom()) != 0:
                     print('Error: ' + str(i) + ', ' + str(j))
                     exit(1)
 
             if j > 0:
-                if int(pieces[matrix[i][j]][0]) + int(pieces[matrix[i][j-1]][2]) != 0:
+                if int(pieces[matrix[i][j]].left()) + int(pieces[matrix[i][j-1]].right()) != 0:
                     print('Error: ' + str(i) + ', ' + str(j))
                     exit(1)
     print('Success!!!')
@@ -87,26 +135,33 @@ def validateSolution(inFile, outFile):
 
 def main(args):
     global EXE_PATH
+    rotation = False
 
-    if len(args) > 1 and args[1] == 'mac':
-        EXE_PATH = MAC_PATH
+    if len(args) > 1:
+        for arg in args:
+            if arg == 'mac':
+                EXE_PATH = MAC_PATH
+            elif arg == 'rotate':
+                rotation = True
 
     for i in range(10):
-        x = 8
-        y = 4
+        x = 4
+        y = 5
 
         with open('./ignored/tester.txt', 'w+') as f:
             f.write('NumElements=' + str(x * y) + '\n')
 
             i = 0
 
-            for line in generate_puzzle(x, y):
+            for line in generate_puzzle(x, y, rotation):
                 for elem in line:
                     i += 1
                     f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
         start = time.time()
-        print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read())
+        rotate = '' if not rotation else ' -rotate'
+
+        print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out' + rotate).read())
         end = time.time()
         print('Elapsed time: ' + str(end - start))
 
