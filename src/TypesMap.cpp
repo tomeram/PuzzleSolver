@@ -121,7 +121,7 @@ int TypesMap::countBottomEdges() {
 			if (type.first.find("0") != string::npos) {
 				res++;
 			}
-		} else  if (type.first.at(6) == 0) {
+		} else if (type.first.back() == '0') {
 			res++;
 		}
 	}
