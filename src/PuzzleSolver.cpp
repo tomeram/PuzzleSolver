@@ -5,24 +5,25 @@
 #include "PuzzleSolver.h"
 #include "PuzzleValidator.h"
 
-PuzzleSolver::PuzzleSolver(Puzzle &puzzle, ofstream *output, bool rotation) :
-        rotate(rotation), _puzzle(puzzle), out(output), types(&_puzzle, rotate)
+PuzzleSolver::PuzzleSolver(Puzzle *puzzle, ofstream *output, bool rotation) :
+        _rotate(rotation), _puzzle(puzzle), out(output), _types(_puzzle, _rotate)
 {
-    int size = static_cast<int>(puzzle.getPieces().size());
+    int size = static_cast<int>(puzzle->getPieces().size());
 
     for (int i = 1; i <= size; i++) {
         if (size % i == 0) {
-            rowLengths.insert(i);
+            _rowLengths.insert(i);
         }
     }
 
     checkInput();
 }
 
-
-bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
+bool PuzzleSolver::checkEdges()
 {
     int l = 0, t = 0, r = 0, b = 0;
+
+	const auto &pieces = _puzzle->getPieces();
 
     for (auto p: pieces) {
         if (p.left() == 0) {
@@ -43,58 +44,63 @@ bool checkEdges(const vector<PuzzlePiece> &pieces, set<int> &rowLengths)
 
     }
 
-    auto newRows = rowLengths;
+    auto newRows = _rowLengths;
 
-    for (int rows: rowLengths) {
-        int cols = pieces.size() / rows;
+    for (int rows: _rowLengths) {
+		int cols = pieces.size() / rows;
 
-        if (l < cols || r < cols || t < rows || b < rows) {
-            newRows.erase(rows);
-        }
+		if (!_rotate) {
+			if (l < cols || r < cols || t < rows || b < rows) {
+				newRows.erase(rows);
+			}
+		} else {
+			// TODO
+		}
     }
 
-    rowLengths = newRows;
+    _rowLengths = newRows;
 
     return !newRows.empty();
 }
 
-
-bool sumPieces(const vector<PuzzlePiece> &pieces)
+bool PuzzleSolver::sumPieces()
 {
     int v = 0;
     int h = 0;
 
-    for (PuzzlePiece p: pieces) {
+    for (const auto &p: _puzzle->getPieces()) {
         v += p.top() + p.bottom();
         h += p.left() + p.right();
     }
 
-    return (v == 0) && (h == 0);
+	if (!_rotate) {
+		return (v == 0) && (h == 0);
+	}
+
+	return (v + h) == 0;
 }
 
 
 void PuzzleSolver::checkInput()
 {
-    const vector<PuzzlePiece> &pieces = _puzzle.getPieces();
+    const vector<PuzzlePiece> &pieces = _puzzle->getPieces();
 
-    if (!checkEdges(pieces, rowLengths)) {
+    if (!checkEdges()) {
         *(out) << "Cannot solve puzzle: wrong number of straight edges" << endl;
-        valid = false;
+        _valid = false;
     }
 
     if (pieces.size() > 1) {
         checkCorners();
     }
 
-    if (!sumPieces(pieces)) {
+    if (!sumPieces()) {
         *(out) << "Cannot solve puzzle: sum of edges is not zero" << endl;
-        valid = false;
+        _valid = false;
     }
 }
 
-
-
-bool checkRow(const Puzzle &puzzle)
+bool checkRow(Puzzle &puzzle)
 {
     bool L = false, R = false;
 
@@ -114,8 +120,7 @@ bool checkRow(const Puzzle &puzzle)
     return L && R;
 }
 
-
-bool checkCol(const Puzzle &puzzle)
+bool checkCol(Puzzle &puzzle)
 {
     bool T = false, B = false;
 
@@ -138,15 +143,14 @@ bool checkCol(const Puzzle &puzzle)
 
 bool PuzzleSolver::checkRowCol()
 {
-    return checkRow(_puzzle) || checkCol(_puzzle);
+    return checkRow(*_puzzle) || checkCol(*_puzzle);
 }
-
 
 void PuzzleSolver::checkCorners()
 {
     int TL = 0, TR = 0, BL = 0, BR = 0;
 
-    for (PuzzlePiece piece: _puzzle.getPieces()) {
+    for (PuzzlePiece piece: _puzzle->getPieces()) {
         if (piece.top() == 0 && piece.left() == 0) {
             TL++;
         }
@@ -161,38 +165,40 @@ void PuzzleSolver::checkCorners()
         }
     }
 
-    if (!(TL && TR && BL && BR)) {
+    if (!_rotate && !(TL && TR && BL && BR)) {
         if (!checkRowCol()) {
             if (TL == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: TL" << endl;
-                valid = false;
+                _valid = false;
             }
             if (TR == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: TR" << endl;
-                valid = false;
+                _valid = false;
             }
             if (BL == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: BL" << endl;
-                valid = false;
+                _valid = false;
             }
             if (BR == 0) {
                 *(out) << "Cannot solve puzzle: missing corner element: BR" << endl;
-                valid = false;
+                _valid = false;
             }
         }
-    }
+    } else if (_rotate) {
+		// TODO
+	}
 }
 
 
 bool PuzzleSolver::solve() {
-    return solve(PuzzleSolution(), _puzzle.getPieces(), getEdges(), types);
+    return solve(PuzzleSolution());
 }
 
 
-bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, TypesMap types) {
-    if (unused.empty()) {
-        if (PuzzleValidator::validate(_puzzle, sol)) {
-            this->sol = sol;
+bool PuzzleSolver::solve(PuzzleSolution sol) {
+    if (_types.empty()) {
+        if (PuzzleValidator::validate(*_puzzle, sol)) {
+            _sol = sol;
 
             return true;
         } else {
@@ -200,39 +206,24 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
         }
     }
 
-    vector<string> goodTypes = addNextElement(sol, unused, edges, types);
+    auto goodTypes = getGoodTypes(sol, _types);
 
-    for (const string &type: goodTypes) {
-        vector<PuzzlePiece> newUnused = unused;
+    for (const auto &type: goodTypes) {
         PuzzleSolution newSol = sol;
-        Edges newEdges = edges;
-        auto newTypes = types;
 
-        vector<int> &usedType = newTypes[type];
+		auto piece = _types.getPiece(type);
 
-        if (usedType.empty()) {
-            continue;
-        }
+		if (piece == nullptr) {
+			continue;
+		}
 
-        int id = usedType.at(0);
-        usedType.erase(usedType.begin());
+        newSol.addElement(piece->id);
 
-        if (usedType.empty()) {
-            newTypes.erase(type);
-        }
-
-        newEdges.removePiece(id);
-        newSol.addElement(static_cast<unsigned int>(id));
-
-        for (unsigned int i = 0; i < unused.size(); i++) {
-            if (unused.at(i).id == id) {
-                newUnused.erase(newUnused.begin() + i);
-            }
-        }
-
-        if (solve(newSol, newUnused, newEdges, newTypes)) {
+        if (solve(newSol)) {
             return true;
-        }
+        } else {
+			_types.addPiece(piece);
+		}
     }
 
     auto currRow = sol.getSolution().size() - 1;
@@ -242,17 +233,17 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
         return false;
     }
 
-    auto search = rowLengths.find(currRowSize);
+    auto search = _rowLengths.find(currRowSize);
 
-    if (search != rowLengths.end()) {
+    if (search != _rowLengths.end()) {
         PuzzleSolution newRowSol = sol;
         newRowSol.addRow();
 
-        if (!sumEdges(sol.getSolution().back(), unused)) {
+        if (!sumEdges(sol.getSolution().back())) {
             return false;
         }
 
-        if (solve(newRowSol, unused, edges, types)) {
+        if (solve(newRowSol)) {
             return true;
         }
     }
@@ -262,14 +253,13 @@ bool PuzzleSolver::solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges e
 
 
 const PuzzleSolution &PuzzleSolver::getSol() const {
-    return sol;
+    return _sol;
 }
 
 
-vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
-                                            TypesMap types)
+vector<TypesMap::Constraints> PuzzleSolver::getGoodTypes(PuzzleSolution sol, TypesMap types)
 {
-    vector<string> res;
+	vector<TypesMap::Constraints> res;
     auto matrix = sol.getSolution();
     auto size = matrix.size();
 
@@ -278,10 +268,10 @@ vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePie
             return res;
         }
 
-        auto rowSize = matrix.at(0).size();
-        auto bottomSize = edges.bottom.size();
+        auto rowSize = static_cast<int>(matrix.at(0).size());
+        auto bottomSize = types.countBottomEdges();
 
-        if (rowSize > bottomSize && bottomSize < unused.size()) {
+        if (rowSize > bottomSize && bottomSize < types.size()) {
             return res;
         }
     }
@@ -291,17 +281,14 @@ vector<string> PuzzleSolver::addNextElement(PuzzleSolution sol, vector<PuzzlePie
     for (int l: sides) {
         for (int t: sides) {
 
-            if (checkNewPiece(sol.getSolution(), PuzzlePiece(0, l, t, 0, 0))) {
+            if (checkNewPiece(sol.getSolution(), TypesMap::Constraints(l, t, 0, 0))) {
                 for (int r: sides) {
                     for (int b: sides) {
 
-                        auto typePiece = PuzzlePiece(-1, l, t, r, b);
+                        auto typePiece = TypesMap::Constraints(l, t, r, b);
 
-                        string typeID = typePiece.getType();
-
-                        if (types.find(typeID)) {
-                            res.push_back(typeID);
-                        }
+                        auto tmp = types.getTypes(typePiece);
+                        res.insert(res.end(), tmp.begin(), tmp.end());
                     }
                 }
             }
@@ -318,7 +305,7 @@ bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const 
 
     // Top
     if (row > 0) {
-        auto &top = _puzzle.getPieceById(sol.at(row - 1).at(col));
+        auto &top = _puzzle->getPieceById(sol.at(row - 1).at(col));
 
         if (top.bottom() + piece.top() != 0) {
             return false;
@@ -331,7 +318,7 @@ bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const 
 
     // Left
     if (col > 0) {
-        auto &left = _puzzle.getPieceById(sol.at(row).at(col - 1));
+        auto &left = _puzzle->getPieceById(sol.at(row).at(col - 1));
 
         if (left.right() + piece.left() != 0) {
             return false;
@@ -345,52 +332,19 @@ bool PuzzleSolver::checkNewPiece(const vector<vector<unsigned int>> &sol, const 
     return true;
 }
 
-
-Edges PuzzleSolver::getEdges() {
-    Edges res;
-
-    for (PuzzlePiece piece: _puzzle.getPieces()) {
-        if (piece.left() == 0) {
-            res.left.insert(piece.id);
-        }
-
-        if (piece.top() == 0) {
-            res.top.insert(piece.id);
-        }
-
-        if (piece.right() == 0) {
-            res.right.insert(piece.id);
-        }
-
-        if (piece.bottom() == 0) {
-            res.bottom.insert(piece.id);
-        }
-    }
-
-    return res;
-}
-
-
-bool PuzzleSolver::sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces) {
+bool PuzzleSolver::sumEdges(const vector<unsigned int> &lastRow) {
     int hor = 0;
     int ver = 0;
 
-    for (PuzzlePiece p: pieces) {
-        hor += p.left() + p.right();
-        ver += p.top() + p.bottom();
-    }
+	_types.sumPieces(hor, ver);
 
     for (auto i: lastRow) {
-        ver += _puzzle.getPieces().at(i - 1).bottom();
+        ver += _puzzle->getPieces().at(i - 1).bottom();
     }
 
-    return (hor == 0 && ver == 0);
-}
+	if (!_rotate) {
+		return (hor == 0 && ver == 0);
+	}
 
-
-void Edges::removePiece(int id) {
-    left.erase(id);
-    top.erase(id);
-    right.erase(id);
-    bottom.erase(id);
+	return (hor + ver) == 0;
 }

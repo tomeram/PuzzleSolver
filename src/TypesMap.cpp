@@ -3,6 +3,7 @@
 //
 
 #include <set>
+#include <c++/iostream>
 #include "TypesMap.h"
 
 TypesMap::TypesMap(Puzzle *puzzle, bool rotate) : _puzzle(puzzle), _rotate(rotate)
@@ -17,117 +18,19 @@ vector<int> &TypesMap::operator[](string type)
     return _types[type];
 }
 
-void TypesMap::erase(const string &type)
+vector<TypesMap::Constraints> TypesMap::getTypes(Constraints c) const
 {
-    _types.erase(type);
-}
-
-bool TypesMap::find(string type)
-{
-    return _types.find(type) != _types.end();
-
-}
-
-const auto SIDES = {-1, 0, 1};
-
-set<TypesMap::Constraints> TypesMap::checkBottom(Constraints &c, Constraints &p) const
-{
-    set<TypesMap::Constraints> res;
-    auto sides = SIDES;
-
-    if (c.bottom() > -2) {
-        sides = {c.bottom()};
-    }
-
-    for (auto side: sides) {
-        p.bottom(side);
-		// TODO: Decide method
-		res.insert(p);
-
-//        int rotations = _rotate ? 4 : 1;
-//
-//        for (int i = 0; i < rotations; i++) {
-//            p.rotate(i);
-//            if (_types.find(p.getType()) != _types.end()) {
-//                p.rotate(0);
-//                res.insert(p);
-//
-//                break;
-//            }
-//        }
-    }
-
-    return res;
-}
-
-set<TypesMap::Constraints> TypesMap::checkRight(Constraints &c, Constraints &p) const
-{
-    set<TypesMap::Constraints> res;
-    set<TypesMap::Constraints> tmp;
-
-    auto sides = SIDES;
-
-    if (c.right() > -2) {
-        sides = {c.right()};
-    }
-
-    for (auto side: sides) {
-        p.right(side);
-        tmp = checkBottom(c, p);
-        res.insert(tmp.begin(), tmp.end());
-    }
-
-    return res;
-}
-
-set<TypesMap::Constraints> TypesMap::checkTop(Constraints &c, Constraints &p) const
-{
-    set<TypesMap::Constraints> res;
-    set<TypesMap::Constraints> tmp;
-
-    auto sides = SIDES;
-
-    if (c.top() > -2) {
-        sides = {c.top()};
-    }
-
-    for (auto side: sides) {
-        p.top(side);
-        tmp = checkRight(c, p);
-        res.insert(tmp.begin(), tmp.end());
-    }
-
-    return res;
-}
-
-set<TypesMap::Constraints> TypesMap::checkLeft(Constraints &c, Constraints &p) const
-{
-    set<TypesMap::Constraints> res;
-    set<TypesMap::Constraints> tmp;
-
-    auto sides = SIDES;
-
-    if (c.left() > -2) {
-        sides = {c.left()};
-    }
-
-    for (auto side: sides) {
-        p.left(side);
-        tmp = checkTop(c, p);
-        res.insert(tmp.begin(), tmp.end());
-    }
-
-    return res;
-}
-
-vector<TypesMap::Constraints> TypesMap::getTypes(Constraints &c) const
-{
-    Constraints p;
-    set<TypesMap::Constraints> resSet = checkLeft(c, p);
-
-
     vector<TypesMap::Constraints> res;
-    res.insert(res.end(), resSet.begin(), resSet.end());
+
+	int rotations = _rotate ? 4 : 1;
+
+	for (int i = 0; i < rotations; i++) {
+		c.rotate(i);
+		if (_types.find(c.getType()) != _types.end()) {
+			auto copy = c;
+			res.push_back(copy);
+		}
+	}
 
     return res;
 }
@@ -156,9 +59,13 @@ PuzzlePiece *TypesMap::getPiece(Constraints type)
         }
 
         auto piece = &_puzzle->getPieceById(id);
-        piece->rotate((4 - i) % 4);
 
-        return piece;
+		for (int j = 0; j < rotations; j++) {
+			piece->rotate(j);
+
+			if (piece->getType() == type.getType())
+				return piece;
+		}
     }
 
     return nullptr;
@@ -195,5 +102,37 @@ void TypesMap::addPiece(PuzzlePiece *piece) {
 	if (!found) {
 		piece->rotate(0);
 		_types[piece->getType()] = {piece->id};
+	}
+}
+
+int TypesMap::size() {
+	return _types.size();
+}
+
+bool TypesMap::empty() {
+	return _types.empty();
+}
+
+int TypesMap::countBottomEdges() {
+	int res = 0;
+
+	for (const auto &type: _types) {
+		if (_rotate) {
+			if (type.first.find("0") != string::npos) {
+				res++;
+			}
+		} else  if (type.first.at(6) == 0) {
+			res++;
+		}
+	}
+
+	return res;
+}
+
+void TypesMap::sumPieces(int &hor, int &ver) {
+	for (const auto &type: _types) {
+		auto piece = _puzzle->getPieceById(type.second.at(0));
+		hor += (piece.left() + piece.right()) * type.second.size();
+		ver += (piece.top() + piece.bottom()) * type.second.size();
 	}
 }

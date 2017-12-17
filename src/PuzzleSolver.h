@@ -17,30 +17,22 @@
 
 using namespace std;
 
-class Edges {
-public:
-    set<int> left, top, right, bottom;
-
-    void removePiece(int id);
-};
-
 class PuzzleSolver {
 private:
-    bool rotate = false;
-    bool valid = true;
-    Puzzle _puzzle;
+    bool _rotate = false;
+    bool _valid = true;
+    Puzzle *_puzzle;
     ofstream *out;
-    PuzzleSolution sol;
-    set<int> rowLengths;
-    TypesMap types;
+    PuzzleSolution _sol;
+    set<int> _rowLengths;
+    TypesMap _types;
 
 
-    bool solve(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges, TypesMap types);
+    bool solve(PuzzleSolution sol);
 
     bool checkNewPiece(const vector<vector<unsigned int>> &sol, const PuzzlePiece &piece);
 
-    vector<string> addNextElement(PuzzleSolution sol, vector<PuzzlePiece> unused, Edges edges,
-                                  TypesMap types);
+	vector<TypesMap::Constraints> getGoodTypes(PuzzleSolution sol, TypesMap types);
 
     bool checkRowCol();
 
@@ -48,20 +40,22 @@ private:
 
     void checkInput();
 
-    bool sumEdges(const vector<unsigned int> &lastRow, vector<PuzzlePiece> &pieces);
+    bool sumEdges(const vector<unsigned int> &lastRow);
+
+	bool checkEdges();
+
+	bool sumPieces();
 
 public:
-    PuzzleSolver(Puzzle &puzzle, ofstream *output, bool rotation);
+    PuzzleSolver(Puzzle *puzzle, ofstream *output, bool rotation);
 
     bool isValid() {
-        return valid;
+        return _valid;
     }
 
     bool solve();
 
     const PuzzleSolution &getSol() const;
-
-    Edges getEdges();
 };
 
 

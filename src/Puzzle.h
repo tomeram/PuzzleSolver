@@ -20,7 +20,7 @@ public:
 
     unsigned long getPieceNumber() const;
 
-    vector<PuzzlePiece> getPieces() const;
+    vector<PuzzlePiece> & getPieces();
 
 	int size();
 

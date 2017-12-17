@@ -5,7 +5,6 @@
 #include "PuzzleValidator.h"
 #include "InputReader.h"
 #include "PuzzleSolver.h"
-#include "RotationSolver.h"
 
 void printUsage(const string &arg0)
 {
@@ -88,16 +87,17 @@ int main(int argc, char** argv)
 
 	Puzzle puzzle(pieces);
 
-	RotationSolver solver(&puzzle, rotation);
+//	RotationSolver solver(&puzzle, rotation);
 
+	PuzzleSolver solver(&puzzle, &outputFile, rotation);
 	// TODO: Validate
-//    if (!solver.isValid()) {
-//        outputFile.close();
-//        return 1;
-//    }
+    if (!solver.isValid()) {
+        outputFile.close();
+        return 1;
+    }
 
 	if (solver.solve()) {
-		solver.getSol().print(&outputFile);
+		solver.getSol().print(&outputFile, rotation, puzzle);
 	} else {
 		outputFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
 	}

@@ -92,8 +92,8 @@ def main(args):
         EXE_PATH = MAC_PATH
 
     for i in range(10):
-        x = 6
-        y = 6
+        x = 8
+        y = 4
 
         with open('./ignored/tester.txt', 'w+') as f:
             f.write('NumElements=' + str(x * y) + '\n')

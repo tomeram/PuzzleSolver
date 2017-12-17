@@ -29,25 +29,24 @@ private:
     Puzzle *_puzzle;
     bool _rotate;
 
-    set<Constraints> checkBottom(Constraints &c, Constraints &p) const;
-    set<Constraints> checkRight(Constraints &c, Constraints &p) const;
-    set<Constraints> checkTop(Constraints &c, Constraints &p) const;
-    set<Constraints> checkLeft(Constraints &c, Constraints &p) const;
-
 public:
     explicit TypesMap(Puzzle *puzzle, bool rotate = false);
 
     vector<int> &operator[](string type);
 
-    void erase(const string &basic_string);
-
-    bool find(string basic_string);
-
-    vector<Constraints> getTypes(Constraints &c) const;
+    vector<Constraints> getTypes(Constraints c) const;
 
     PuzzlePiece* getPiece(Constraints type);
 
 	void addPiece(PuzzlePiece *piece);
+
+	int size();
+
+	bool empty();
+
+	int countBottomEdges();
+
+	void sumPieces(int &hor, int &ver);
 };
 
 

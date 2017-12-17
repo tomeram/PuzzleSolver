@@ -46,7 +46,7 @@ string PuzzlePiece::getRotation() const {
         return "";
     }
 
-    if (rotation == 1) {
+    if (rotation == 3) {
         return "90";
     }
 
