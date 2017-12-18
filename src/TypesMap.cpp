@@ -3,7 +3,6 @@
 //
 
 #include <set>
-#include <c++/iostream>
 #include "TypesMap.h"
 
 TypesMap::TypesMap(Puzzle *puzzle, bool rotate) : _puzzle(puzzle), _rotate(rotate)
