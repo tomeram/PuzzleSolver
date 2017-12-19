@@ -1,8 +1,8 @@
 CXX = g++-5.3.0
 #put all your object files here
-OBJS = PuzzlePiece.o InputReader.o PuzzleSolution.o Puzzle.o PuzzleSolver.o PuzzleValidator.o main.o #objects should be placed here!
+OBJS = PuzzlePiece.o InputReader.o PuzzleSolution.o Puzzle.o TypesMap.o PuzzleSolver.o PuzzleValidator.o main.o #objects should be placed here!
 #The executabel filename DON'T CHANGE
-EXEC = ex1
+EXEC = ex2
 CXXFLAGS = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
 
@@ -12,7 +12,7 @@ $(EXEC): $(OBJS)
 #a rule for building a simple c++ source file
 #use g++-5.3.0 -MM main.cpp to see dependencies
 
-main.o: InputReader.h PuzzleSolution.h PuzzlePiece.h PuzzleValidator.h Puzzle.h
+main.o: InputReader.h PuzzleSolution.h PuzzlePiece.h PuzzleValidator.h Puzzle.h TypesMap.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 PuzzleValidator.o: PuzzleValidator.h PuzzlePiece.h Puzzle.h
@@ -20,6 +20,9 @@ PuzzleValidator.o: PuzzleValidator.h PuzzlePiece.h Puzzle.h
 
 PuzzleSolver.o: PuzzleSolver.h Puzzle.h PuzzleSolution.h
 	$(CXX) $(CXXFLAGS) -c PuzzleSolver.cpp
+
+TypesMap.o: Puzzle.h
+	$(CXX) $(CXXFLAGS) -c TypesMap.cpp
 
 Puzzle.o: Puzzle.h PuzzlePiece.h
 	$(CXX) $(CXXFLAGS) -c Puzzle.cpp
