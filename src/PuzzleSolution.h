@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <fstream>
+#include "Puzzle.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ public:
 
     vector<unsigned int> &row(int num) const;
 
-    void print(ofstream *out) const;
+    void print(ofstream *out, bool rotate, Puzzle &puzzle) const;
 };
 
 

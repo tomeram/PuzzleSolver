@@ -11,22 +11,22 @@ using namespace std;
 bool checkPuzzleEdges(const PuzzlePiece &piece, int row, int col, int cols, int rows)
 {
     // Check first row
-    if (row == 0 && piece.t != 0) {
+    if (row == 0 && piece.top() != 0) {
         return false;
     }
 
     // Check last row
-    if (row == rows - 1 && piece.b != 0) {
+    if (row == rows - 1 && piece.bottom() != 0) {
         return false;
     }
 
     // First piece in row
-    if (col == 0 && piece.l != 0) {
+    if (col == 0 && piece.left() != 0) {
         return false;
     }
 
     // Last piece in row
-    if (col == cols - 1 && piece.r != 0) {
+    if (col == cols - 1 && piece.right() != 0) {
         return false;
     }
 
@@ -50,7 +50,7 @@ bool checkUsedPieces(vector<unsigned int> &usedPieces, unsigned int pieceNum)
     return true;
 }
 
-bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
+bool PuzzleValidator::validate(Puzzle &puzzle, const PuzzleSolution &sol)
 {
     if (sol.empty()) {
         return false;
@@ -83,7 +83,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
             if (i > 0) {
                 auto &top = puzzle.getPieceById(sol.row(i - 1).at(j));
 
-                if (top.b + piece.t != 0) {
+                if (top.bottom() + piece.top() != 0) {
                     return false;
                 }
             }
@@ -92,7 +92,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
             if (i < sol.size() - 1) {
                 auto &bot = puzzle.getPieceById(sol.row(i + 1).at(j));
 
-                if (bot.t + piece.b != 0) {
+                if (bot.top() + piece.bottom() != 0) {
                     return false;
                 }
             }
@@ -101,7 +101,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
             if (j > 0) {
                 auto &left = puzzle.getPieceById(sol.row(i).at(j - 1));
 
-                if (left.r + piece.l != 0) {
+                if (left.right() + piece.left() != 0) {
                     return false;
                 }
             }
@@ -110,7 +110,7 @@ bool PuzzleValidator::validate(const Puzzle &puzzle, const PuzzleSolution &sol)
             if (j < rowSize - 1) {
                 auto &right = puzzle.getPieceById(sol.row(i).at(j + 1));
 
-                if (right.l + piece.r != 0) {
+                if (right.left() + piece.right() != 0) {
                     return false;
                 }
             }

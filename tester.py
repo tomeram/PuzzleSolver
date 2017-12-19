@@ -1,9 +1,46 @@
 import os
 import sys
+import time
 import random
 
 MAC_PATH = './cmake-build-debug/PuzzleSolver'
 EXE_PATH = 'cmake-build-debug\PuzzleSolver.exe'
+
+
+class Piece:
+    def __init__(self, l, t, r, b, id):
+        self.id = id
+        self.sides = [l, t, r, b]
+        self.rotation = 0
+
+    def rotate(self, deg=None):
+        if deg == 90:
+            self.rotation = 3
+        elif deg == 180:
+            self.rotation = 2
+        elif deg == 270:
+            self.rotation = 1
+        elif deg is None:
+            self.rotation = 0
+        else:
+            print('error')
+
+    def left(self):
+        return self.sides[self.rotation]
+
+    def top(self):
+        return self.sides[(self.rotation + 1) % 4]
+
+    def right(self):
+        return self.sides[(self.rotation + 2) % 4]
+
+    def bottom(self):
+        return self.sides[(self.rotation + 3) % 4]
+
+
+def rotate_piece(piece):
+    n = random.randrange(0, 3)
+    return piece[-n:] + piece[:-n]
 
 
 def random_side():
@@ -12,7 +49,7 @@ def random_side():
     return random.choice(values)
 
 
-def generate_puzzle(x, y):
+def generate_puzzle(x, y, rotate):
     res = []
 
     for i in range(0, x):
@@ -27,6 +64,10 @@ def generate_puzzle(x, y):
             res[i].append((l, t, r, b))
 
     for line in res:
+        if rotate:
+            for piece in line:
+                rotate_piece(piece)
+
         random.shuffle(line)
 
     random.shuffle(res)
@@ -50,63 +91,96 @@ def validateSolution(inFile, outFile):
         line = line.split()
 
         if len(line) > 0:
-            pieces[line[0]] = line[1:]
+            l = int(line[1])
+            t = int(line[2])
+            r = int(line[3])
+            b = int(line[4])
+
+            pieces[line[0]] = Piece(l, t, r, b, line[0])
 
     seen = set()
     matrix = []
     lines = output.split('\n')
 
-    for i in range(len(lines)):
+    for row in range(len(lines)):
         matrix.append([])
-        cols = lines[i].split()
-        for j in range(len(cols)):
+        cols = lines[row].split()
+
+        colsIter = iter(range(len(cols)))
+        col = -1
+
+        for j in colsIter:
+            col += 1
             id = cols[j]
-            matrix[i].append(id)
+            matrix[row].append(id)
 
             if id in seen:
                 print('Error: Duplicate piece - ' + str(id))
                 exit(1)
 
             seen.add(id)
+            piece = pieces[id]
 
-            if i == 0 and pieces[matrix[i][j]][1] != '0':
-                print('Error: ' + str(i) + ', ' + str(j))
+            if j + 1 < len(cols) and '[' in cols[j + 1]:
+                s = cols[j + 1].index('[') + 1
+                e = cols[j + 1].index(']')
+                piece.rotate(int(cols[j + 1][s:e]))
+
+                next(colsIter)
+
+            if row == 0 and piece.top() != 0:
+                print('Error: ' + str(row) + ', ' + str(col))
                 exit(1)
-            elif i > 0:
-                if int(pieces[matrix[i][j]][1]) + int(pieces[matrix[i-1][j]][3]) != 0:
-                    print('Error: ' + str(i) + ', ' + str(j))
+            elif row > 0:
+                if int(piece.top()) + int(pieces[matrix[row-1][col]].bottom()) != 0:
+                    print('Error: ' + str(row) + ', ' + str(col))
                     exit(1)
 
             if j > 0:
-                if int(pieces[matrix[i][j]][0]) + int(pieces[matrix[i][j-1]][2]) != 0:
-                    print('Error: ' + str(i) + ', ' + str(j))
+                if int(piece.left()) + int(pieces[matrix[row][col-1]].right()) != 0:
+                    print('Error: ' + str(row) + ', ' + str(col))
                     exit(1)
     print('Success!!!')
 
 
 def main(args):
     global EXE_PATH
+    rotation = False
 
-    if len(args) > 1 and args[1] == 'mac':
-        EXE_PATH = MAC_PATH
+    if len(args) > 1:
+        for arg in args:
+            if arg == 'mac':
+                EXE_PATH = MAC_PATH
+            elif arg == 'rotate':
+                rotation = True
 
-    for i in range(10):
-        x = 2
-        y = 2
+    for j in range(1, 2):
+        x = 3
+        y = 6
 
         with open('./ignored/tester.txt', 'w+') as f:
             f.write('NumElements=' + str(x * y) + '\n')
 
             i = 0
 
-            for line in generate_puzzle(x, y):
+            for line in generate_puzzle(x, y, rotation):
                 for elem in line:
                     i += 1
                     f.write(str(i) + ' ' + str(elem[0]) + ' ' + str(elem[1]) + ' ' + str(elem[2]) + ' ' + str(elem[3]) + '\n')
 
-        print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out').read())
+        start = time.time()
+        rotate = '' if not rotation else ' -rotate'
 
-        validateSolution('./ignored/tester.txt', './ignored/test.out')
+        print(os.popen(EXE_PATH + ' ./ignored/tester.txt ./ignored/test.out' + rotate).read())
+        end = time.time()
+        print('Test ' + str(j))
+        print('Elapsed time: ' + str(end - start))
+
+        try:
+            validateSolution('./ignored/tester.txt', './ignored/test.out')
+        except:
+            print('Failed :(')
+            return
 
 
 if __name__ == '__main__':

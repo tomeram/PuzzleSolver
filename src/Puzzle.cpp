@@ -5,21 +5,24 @@
 #include <algorithm>
 #include "Puzzle.h"
 
-Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(move(newPieces))
+Puzzle::Puzzle(vector<PuzzlePiece> newPieces): pieces(newPieces)
 {
     sort(pieces.begin(), pieces.end(), PuzzlePiece::compare);
 }
 
-const PuzzlePiece &Puzzle::getPieceById(int id) const {
-    const auto &res = pieces.at(id - 1);
-    return res;
+PuzzlePiece &Puzzle::getPieceById(int id) {;
+    return pieces.at(id - 1);
 }
 
 unsigned long Puzzle::getPieceNumber() const {
     return pieces.size();
 }
 
-vector<PuzzlePiece> Puzzle::getPieces() const
+vector<PuzzlePiece> & Puzzle::getPieces()
 {
-    return this->pieces;
+    return pieces;
+}
+
+int Puzzle::size() {
+	return pieces.size();
 }

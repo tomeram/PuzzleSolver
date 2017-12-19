@@ -37,17 +37,26 @@ unsigned long PuzzleSolution::size() const {
     return sol.size();
 }
 
-void PuzzleSolution::print(ofstream *out) const
+void PuzzleSolution::print(ofstream *out, bool rotate, Puzzle &puzzle) const
 {
     for (auto row: sol) {
         for (unsigned int i = 0; i < row.size(); i++) {
-            *(out) << row.at(i);
+			auto pieceID = row.at(i);
+            *out << pieceID;
+
+			if (rotate) {
+				auto pieceRotation = puzzle.getPieceById(pieceID).getRotation();
+
+				if (!pieceRotation.empty()) {
+					*out << " [" << pieceRotation << "]";
+				}
+			}
 
             if (i < row.size() - 1) {
-                *(out) << " ";
+                *out << " ";
             }
         }
 
-        *(out) << endl;
+        *out << endl;
     }
 }

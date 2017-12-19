@@ -16,11 +16,13 @@ public:
 
     ~Puzzle() = default;
 
-    const PuzzlePiece &getPieceById(int id) const;
+    PuzzlePiece &getPieceById(int id);
 
     unsigned long getPieceNumber() const;
 
-    vector<PuzzlePiece> getPieces() const;
+    vector<PuzzlePiece> & getPieces();
+
+	int size();
 
 private:
     vector<PuzzlePiece> pieces;
